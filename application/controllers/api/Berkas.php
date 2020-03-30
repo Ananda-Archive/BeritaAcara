@@ -147,6 +147,13 @@ class Berkas extends REST_Controller {
                                     ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
                                 );
                             }
+                        } else {
+                            $this->response(
+                                array(
+                                    'status' => FALSE,
+                                    'message' => $this::UPDATE_FAILED_MESSAGE
+                                ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                            );
                         }
                     }
                 }
@@ -159,6 +166,15 @@ class Berkas extends REST_Controller {
                 ),
                 REST_Controller::HTTP_UNAUTHORIZED
             );
+        }
+        
+    }
+
+    public function index_get() {
+        $id_mahasiswa = $this->get('id_mahasiswa');
+        if(isset($id_mahasiswa)) {
+            $result = $this->M_Berkas->get_berkas_where_mahasiswa($id_mahasiswa);
+            $this->response($result,REST_Controller::HTTP_OK);
         }
     }
 

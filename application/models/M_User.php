@@ -39,6 +39,19 @@ class M_User extends CI_Model{
         return $this->db->insert_id();
     }
 
+    public function get_user_where($id) {
+        $this->db->select('*');
+        $this->db->from($this::TABLE_NAME);
+        $this->db->where("id='{$id}'");
+        return $this->db->get()->result_array();
+    }
+
+    public function get_all_user() {
+        $this->db->select('*');
+        $this->db->from($this::TABLE_NAME);
+        return $this->db->get()->result_array();
+    }
+
     // ------
     public function user_exist($nomor) {
         $this->nomor = $nomor;

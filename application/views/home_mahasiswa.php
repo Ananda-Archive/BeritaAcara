@@ -33,54 +33,21 @@
                                                 <v-col cols='12'>
                                                     <v-form ref='form'>
                                                         <v-file-input
+                                                            v-model="uploadBerkas.toefl"
                                                             color="blue"
-                                                            label="File input 1"
-                                                            placeholder="Select your file 1"
+                                                            label="Berkas TOEFL"
+                                                            placeholder="Select your file"
                                                             prepend-icon=""
-                                                            append-outer-icon="mdi-upload"
-                                                            @click:append-outer="close"
                                                             outlined
                                                             :rules="rules.file"
                                                             :show-size="1000"
                                                             accept="application/pdf"
                                                             class="mt-4"
-                                                        ></v-file-input>
-                                                    </v-form>
-                                                </v-col>
-                                                <v-col cols='12'>
-                                                    <v-form ref='form'>
-                                                        <v-file-input
-                                                            color="blue"
-                                                            label="File input 2"
-                                                            placeholder="Select your file 2"
-                                                            prepend-icon=""
-                                                            append-outer-icon="mdi-upload"
-                                                            @click:append-outer="close"
-                                                            outlined
-                                                            :rules="rules.file"
-                                                            :show-size="1000"
-                                                            accept="application/pdf"
-                                                            class="mt-n5"
-                                                        ></v-file-input>
-                                                    </v-form>
-                                                </v-col>
-                                                <v-col cols='12'>
-                                                    <v-form ref='form'>
-                                                        <v-file-input
-                                                            color="blue"
-                                                            label="File input 3"
-                                                            placeholder="Select your file 3"
-                                                            prepend-icon=""
-                                                            append-outer-icon="mdi-upload"
-                                                            @click:append-outer=""
-                                                            outlined
-                                                            :rules="rules.file"
-                                                            :show-size="1000"
-                                                            accept="application/pdf"
-                                                            class="mt-n5"
+                                                            :disabled="logoOne.logo != uploadLogo.before"
+                                                            :clearable="logoOne.logo == uploadLogo.before"
                                                         >
-                                                            <template v-slot:append-outer>
-                                                                <v-icon>mdi-upload</v-icon>
+                                                            <template v-slot:append>
+                                                                <v-icon :color="logoOne.color">{{logoOne.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
@@ -88,21 +55,54 @@
                                                 <v-col cols='12'>
                                                     <v-form ref='form'>
                                                         <v-file-input
+                                                            v-model="uploadBerkas.fileSkripsi"
                                                             color="blue"
-                                                            label="File input 4"
-                                                            placeholder="Select your file 4"
+                                                            label="Berkas Skripsi"
+                                                            placeholder="Select your file"
                                                             prepend-icon=""
-                                                            append-outer-icon="mdi-upload"
-                                                            @click:append-outer=""
                                                             outlined
-                                                            :rules="rules.file"
                                                             :show-size="1000"
                                                             accept="application/pdf"
                                                             class="mt-n5"
-                                                        ></v-file-input>
+                                                            :disabled="logoTwo.logo != uploadLogo.before"
+                                                            :clearable="logoTwo.logo == uploadLogo.before"
+                                                        >
+                                                            <template v-slot:append>
+                                                                <v-icon :color="logoTwo.color">{{logoTwo.logo}}</v-icon>
+                                                            </template>
+                                                        </v-file-input>
+                                                    </v-form>
+                                                </v-col>
+                                                <v-col cols='12'>
+                                                    <v-form ref='form'>
+                                                        <v-file-input
+                                                            v-model="uploadBerkas.bimbingan"
+                                                            color="blue"
+                                                            label="Kartu Bimbingan"
+                                                            placeholder="Select your file"
+                                                            prepend-icon=""
+                                                            outlined
+                                                            :show-size="1000"
+                                                            accept="application/pdf"
+                                                            class="mt-n5"
+                                                            :disabled="logoThree.logo != uploadLogo.before"
+                                                            :clearable="logoThree.logo == uploadLogo.before"
+                                                        >
+                                                            <template v-slot:append>
+                                                                <v-icon :color="logoThree.color">{{logoThree.logo}}</v-icon>
+                                                            </template>
+                                                        </v-file-input>
                                                     </v-form>
                                                 </v-col>
                                             </v-card-text>
+                                            <v-card-actions>
+                                                <v-container>
+                                                    <v-row justify="center">
+                                                        <v-btn class="mt-n12" color="red darken-1" text @click="close">Cancel</v-btn>
+                                                        <v-btn class="mt-n12" color="green white--text" @click="uploadBerkasAction">Upload</v-btn>
+                                                    </v-row>
+                                                </v-container>
+										</v-card-actions>
                                         </v-card>
                                     </v-dialog>
                                 </v-col>
@@ -137,9 +137,9 @@
 					this.$vuetify.theme.dark = true
 				},
 
-				// mounted() {
-				// 	this.get()
-				// },
+				mounted() {
+					this.get()
+				},
 
 				data() {
 					return {
@@ -149,8 +149,10 @@
                         uploadBerkas: {
                             toefl:'',
                             transkrip:'',
-                            fileSkripsi:''
+                            fileSkripsi:'',
+                            bimbingan:''
                         },
+                        berkass:[],
                         // Snackbar goes here
                         snackbar: false,
                         snackbarMessage: '',
@@ -161,10 +163,150 @@
                                 v => !!v || 'File is required',
                             ],
                         },
+                        // etc
+                        uploadLogo: {
+                            before:'mdi-upload',
+                            in:'mdi-loading mdi-spin',
+                            done:'mdi-check',
+                            error:'mdi-close',
+                            errorColor:'red',
+                            doneColor:'green',
+                            beforeColor:'white'
+                        },
+                        logoOne: {
+                            logo:'mdi-upload',
+                            color:'white'
+                        },
+                        logoTwo: {
+                            logo:'mdi-upload',
+                            color:'white'
+                        },
+                        logoThree: {
+                            logo:'mdi-upload',
+                            color:'white'
+                        }
 					}
 				},
 
 				methods: {
+                    get() {
+                        return new Promise((resolve, reject) => {
+                            axios.get('<?= base_url()?>api/Berkas',{params: {id_mahasiswa: <?=$id?>}})
+                                .then(response => {
+                                    resolve(response.data)
+                                }) .catch(err => {
+                                    if(err.response.status == 500) reject('Server Error')
+                                })
+                        })
+                        .then((response) => {
+                            this.berkass = response
+                        })
+                    },
+                    uploadOne() {
+                        this.logoOne.logo = this.uploadLogo.in
+                        return new Promise((resolve, reject) => {
+                            const dataOne = new FormData()
+                            dataOne.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
+                            dataOne.append('file',this.uploadBerkas.toefl)
+                            dataOne.append('id',this.berkass[0].id)
+                            dataOne.append('transkrip_file',this.berkass[0].transkrip_file)
+                            dataOne.append('which_one','toefl')
+                            axios.post(
+                                '<?= base_url()?>api/Berkas',
+                                dataOne,
+                                {headers: {'Content-Type': 'multipart/form-data'}}
+                            )
+                            .then((response) => {
+                                resolve(response.data)
+                            }) .catch(err => {
+                                if(err.response.status == 500) reject('Server Error')
+                                if(err.response.status == 401) reject(err.response.data)
+                            })
+                        })
+                        .then(() => {
+                            this.logoOne.logo = this.uploadLogo.done
+                            this.logoOne.color = this.uploadLogo.doneColor
+                        }) .catch((err) => {
+                            if(err.message == "ONLY ACCEPT PDF FILE TYPE") {
+                                this.logoOne.logo = this.uploadLogo.error
+                                this.logoOne.color = this.uploadLogo.errorColor
+                            }
+                        }) .finally(() => {
+                            this.get()
+                        })
+                    },
+                    uploadTwo() {
+                        return new Promise((resolve, reject) => {
+                            const dataTwo = new FormData()
+                            dataTwo.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
+                            dataTwo.append('file',this.uploadBerkas.fileSkripsi)
+                            dataTwo.append('id',this.berkass[0].id)
+                            dataTwo.append('transkrip_file',this.berkass[0].transkrip_file)
+                            dataTwo.append('which_one','skripsi')
+                            dataTwo.append('toefl_file',this.berkass[0].toefl_file)
+                            axios.post(
+                                '<?= base_url()?>api/Berkas',
+                                dataTwo,
+                                {headers: {'Content-Type': 'multipart/form-data'}}
+                            )
+                            .then((response) => {
+                                resolve(response.data)
+                            }) .catch(err => {
+                                if(err.response.status == 500) reject('Server Error')
+                                if(err.response.status == 401) reject(err.response.data)
+                            })
+                        })
+                        .then(() => {
+                            this.logoTwo.logo = this.uploadLogo.done
+                            this.logoTwo.color = this.uploadLogo.doneColor
+                        }) .catch((err) => {
+                            if(err.message == "ONLY ACCEPT PDF FILE TYPE") {
+                                this.logoTwo.logo = this.uploadLogo.error
+                                this.logoTwo.color = this.uploadLogo.errorColor
+                            }
+                        }) .finally(() => {
+                            this.get()
+                        })
+                    },
+                    uploadThree() {
+                        return new Promise((resolve, reject) => {
+                            const dataThree = new FormData()
+                            dataThree.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
+                            dataThree.append('file',this.uploadBerkas.bimbingan)
+                            dataThree.append('id',this.berkass[0].id)
+                            dataThree.append('transkrip_file',this.berkass[0].transkrip_file)
+                            dataThree.append('which_one','bimbingan')
+                            dataThree.append('toefl_file',this.berkass[0].toefl_file)
+                            dataThree.append('skripsi_file',this.berkass[0].skripsi_file)
+                            axios.post(
+                                '<?= base_url()?>api/Berkas',
+                                dataThree,
+                                {headers: {'Content-Type': 'multipart/form-data'}}
+                            )
+                            .then((response) => {
+                                resolve(response.data)
+                            }) .catch(err => {
+                                if(err.response.status == 500) reject('Server Error')
+                                if(err.response.status == 401) reject(err.response.data)
+                            })
+                        })
+                        .then(() => {
+                            this.logoThree.logo = this.uploadLogo.done
+                            this.logoThree.color = this.uploadLogo.doneColor
+                        }) .catch((err) => {
+                            if(err.message == "ONLY ACCEPT PDF FILE TYPE") {
+                                this.logoThree.logo = this.uploadLogo.error
+                                this.logoThree.color = this.uploadLogo.errorColor
+                            }
+                        }) .finally(() => {
+                            this.get()
+                        })
+                    },
+                    uploadBerkasAction() {
+                        this.uploadOne()
+                        this.uploadTwo()
+                        this.uploadThree()
+                    },
                     logOut() {
                         window.location.href = '<?=base_url('Pages/logOut');?>'
                     },
