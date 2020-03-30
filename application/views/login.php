@@ -14,7 +14,7 @@
                                         <v-toolbar-title v-if="!registerForm">Login</v-toolbar-title>
                                         <v-toolbar-title v-else>Register</v-toolbar-title>
                                         <v-spacer></v-spacer>
-                                        <span class="red--text">{{errorMessage}}</span>
+                                        <span class="red px-4">{{errorMessage}}</span>
                                     </v-toolbar>
                                     <v-card-text>
                                         <v-form ref="form">
@@ -124,8 +124,8 @@
                     },
                     rules: {
                         nomor: [
-                            v => !!v || 'nomor Wajib diisi',
-                            v => /^[0-9]*$/.test(v) || 'nomor Harus berupa angka'
+                            v => !!v || 'NIM Wajib diisi',
+                            v => /^[0-9]*$/.test(v) || 'NIM Harus berupa angka'
                         ],
                         password: [
                             v => !!v || 'Password Wajib diisi',
@@ -205,7 +205,7 @@
                             }
                         }) .finally(() => {
                             if(this.logInstatus) {
-                                window.location.href = '<?=base_url('Home');?>'
+                                window.location.href = '<?=base_url('Pages/home_mahasiswa');?>'
                             } else {
                                 this.loading = false
                             }
