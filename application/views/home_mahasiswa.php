@@ -30,6 +30,11 @@
                                                 <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
                                             </v-toolbar>
                                             <v-card-text>
+                                                <v-col cols='12' class='text-center mb-n12'>
+                                                    <v-card-text class="red--text">--> FILE HARUS FORMAT PDF & UPLOAD HANYA BISA SEKALI <--</v-card-text>
+                                                </v-col>
+                                            </v-card-text>
+                                            <v-card-text>
                                                 <v-col cols='12'>
                                                     <v-form ref='form'>
                                                         <v-file-input
@@ -39,15 +44,13 @@
                                                             placeholder="Select your file"
                                                             prepend-icon=""
                                                             outlined
-                                                            :rules="rules.file"
-                                                            :show-size="1000"
                                                             accept="application/pdf"
                                                             class="mt-4"
-                                                            :disabled="logoOne.logo != uploadLogo.before"
+                                                            :disabled="disabledOne"
                                                             :clearable="logoOne.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon :color="logoOne.color">{{logoOne.logo}}</v-icon>
+                                                                <v-icon @click="uploadOne" :disabled="uploadBerkas.toefl == null" :color="logoOne.color">{{logoOne.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
@@ -61,14 +64,13 @@
                                                             placeholder="Select your file"
                                                             prepend-icon=""
                                                             outlined
-                                                            :show-size="1000"
                                                             accept="application/pdf"
                                                             class="mt-n5"
-                                                            :disabled="logoTwo.logo != uploadLogo.before"
+                                                            :disabled="disabledTwo"
                                                             :clearable="logoTwo.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon :color="logoTwo.color">{{logoTwo.logo}}</v-icon>
+                                                                <v-icon @click="uploadTwo" :disabled="uploadBerkas.fileSkripsi == null" :color="logoTwo.color">{{logoTwo.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
@@ -82,30 +84,156 @@
                                                             placeholder="Select your file"
                                                             prepend-icon=""
                                                             outlined
-                                                            :show-size="1000"
                                                             accept="application/pdf"
                                                             class="mt-n5"
-                                                            :disabled="logoThree.logo != uploadLogo.before"
+                                                            :disabled="disabledThree"
                                                             :clearable="logoThree.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon :color="logoThree.color">{{logoThree.logo}}</v-icon>
+                                                                <v-icon @click="uploadThree" :disabled="uploadBerkas.bimbingan == null" :color="logoThree.color">{{logoThree.logo}}</v-icon>
+                                                            </template>
+                                                        </v-file-input>
+                                                    </v-form>
+                                                </v-col>
+                                                <v-col cols='12'>
+                                                    <v-form ref='form'>
+                                                        <v-file-input
+                                                            v-model="uploadBerkas.transkrip"
+                                                            color="blue"
+                                                            label="Transkrip Terbaik"
+                                                            placeholder="Select your file"
+                                                            prepend-icon=""
+                                                            outlined
+                                                            accept="application/pdf"
+                                                            class="mt-n5"
+                                                            :disabled="disabledFour"
+                                                            :clearable="logoFour.logo == uploadLogo.before"
+                                                        >
+                                                            <template v-slot:append>
+                                                                <v-icon @click="uploadFour" :disabled="uploadBerkas.transkrip == null" :color="logoFour.color">{{logoFour.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
                                                 </v-col>
                                             </v-card-text>
-                                            <v-card-actions>
-                                                <v-container>
-                                                    <v-row justify="center">
-                                                        <v-btn class="mt-n12" color="red darken-1" text @click="close">Cancel</v-btn>
-                                                        <v-btn class="mt-n12" color="green white--text" @click="uploadBerkasAction">Upload</v-btn>
-                                                    </v-row>
-                                                </v-container>
-										</v-card-actions>
+                                            <v-card-text>
+                                                <v-col cols='12' class='mt-n12 text-center'>
+                                                    <v-card-text class='mt-n6 red--text'>REFRESH PAGE JIKA GAGAL UPLOAD</v-card-text>
+                                                </v-col>
+                                            </v-card-text>
                                         </v-card>
                                     </v-dialog>
                                 </v-col>
+                                <!-- UPLOAD BERITA ACARA -->
+                                <v-col cols='12' sm='12' md='3'>
+                                    <v-card @click="uploadBeritaAcaraDialog = !uploadBeritaAcaraDialog" class="elevation-12 align-center" color="blue" min-height="230" max-height="230">
+                                        <div class="d-flex flex-no-wrap justify-space-between">
+											<div>
+												<v-card-title class="font-weight-light">UPLOAD BERITA ACARA</v-card-title>
+											</div>
+											<div>
+												<v-card-title class="font-weight-light"><v-icon>mdi-newspaper</v-icon></v-card-title>
+											</div>
+										</div>
+										<v-card-title class="justify-center"><v-icon class="display-4">mdi-newspaper-plus</v-icon></v-card-title>
+                                    </v-card>
+                                </v-col>
+                                <v-dialog persistent v-model="uploadBeritaAcaraDialog" max-width="700px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Upload Berita Acara</span>
+                                            <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-card-text>
+                                            <v-form ref='form'>
+                                                <v-col cols='12'>
+                                                    <v-menu
+                                                        ref="showDatePicker"
+                                                        v-model="showDatePicker"
+                                                        :close-on-content-click="false"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-text-field
+                                                            color="accent"
+                                                            label="Tanggal"
+                                                            append-icon="mdi-calendar"
+                                                            :value="formatDate"
+                                                            readonly
+                                                            v-on="on"
+                                                            :solo="true"
+                                                            :clearable="true"
+                                                            @click:clear="uploadBeritaAcara.date = null"
+                                                            class="mt-4 mb-n8"
+                                                            :rules="rules.date"
+                                                            ></v-text-field>
+                                                        </template>
+                                                        <v-date-picker v-model="uploadBeritaAcara.date"  no-title scrollable :weekday-format="dayFormat" @change="showDatePicker = false">
+                                                        </v-date-picker>
+                                                    </v-menu>
+                                                </v-col>
+                                                <v-col cols='12'>
+                                                    <v-dialog
+                                                        ref="dialog"
+                                                        v-model="showTimePicker"
+                                                        :return-value.sync="uploadBeritaAcara.time"
+                                                        persistent
+                                                        width="290px"
+                                                        style="z-index:9999"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-text-field
+                                                            :solo="true"
+                                                            v-model="uploadBeritaAcara.time"
+                                                            label="Waktu"
+                                                            append-icon="mdi-clock-outline"
+                                                            readonly
+                                                            v-on="on"
+                                                            :clearable="true"
+                                                            @click:clear="uploadBeritaAcara.time = ''"
+                                                            :rules="rules.time"
+                                                            ></v-text-field>
+                                                        </template>
+                                                        <v-time-picker
+                                                            v-if="showTimePicker"
+                                                            v-model="uploadBeritaAcara.time"
+                                                            full-width
+                                                        >
+                                                        <v-spacer></v-spacer>
+                                                            <v-btn text color="primary" @click="showTimePicker = false">Cancel</v-btn>
+                                                            <v-btn text color="primary" @click="$refs.dialog.save(uploadBeritaAcara.time)">OK</v-btn>
+                                                        </v-time-picker>
+                                                    </dialog>
+                                                </v-col>
+                                                <v-col cols='12'>
+                                                    <v-file-input
+                                                        v-model="uploadBeritaAcara.file"
+                                                        color="blue"
+                                                        label="Berkas Berita Acara"
+                                                        prepend-icon=''
+                                                        placeholder="Select your file"
+                                                        outlined
+                                                        append-icon="mdi-file"
+                                                        accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                        class="mt-n5"
+                                                        :rules="rules.file"
+                                                    >
+                                                    </v-file-input>
+                                                </v-col>
+                                            </v-form>
+                                            <v-card-actions>
+                                                <v-container>
+                                                    <v-row justify="center">
+                                                        <v-btn class="mt-n8" color="red darken-1" text @click="close">Cancel</v-btn>
+                                                        <v-btn class="mt-n8" color="green white--text" @click="uploadBeritaAcaraAction">Upload</v-btn>
+                                                    </v-row>
+                                                </v-container>
+                                            </v-card-actions>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
                             </v-row>
                         </v-container>
                     </v-layout>
@@ -145,23 +273,42 @@
 					return {
                         // Dialog goes here
                         uploadBerkasDialog: false,
+                        uploadBeritaAcaraDialog: false,
+                        showDatePicker:false,
+                        showTimePicker:false,
                         // Data preparation for JSON
                         uploadBerkas: {
-                            toefl:'',
-                            transkrip:'',
-                            fileSkripsi:'',
-                            bimbingan:''
+                            toefl:null,
+                            transkrip:null,
+                            fileSkripsi:null,
+                            bimbingan:null
                         },
                         berkass:[],
+                        self:{},
+                        uploadBeritaAcara: {
+                            id_mahasiswa:'<?=$id;?>',
+                            file:null,
+                            date:null,
+                            time:null,
+                            id_dosen_pembimbing:null,
+                            id_ketua_penguji:null,
+                            id_dosen_penguji:null
+                        },
                         // Snackbar goes here
                         snackbar: false,
                         snackbarMessage: '',
                         snackbarColor: '',
-                        // Rules goes here
+                        // Rules
                         rules: {
+                            date: [
+								v => !!v || 'Tanggal Wajib Diisi',
+							],
+                            time: [
+								v => !!v || 'Jam Wajib diisi',
+							],
                             file: [
                                 v => !!v || 'File is required',
-                            ],
+                            ]
                         },
                         // etc
                         uploadLogo: {
@@ -184,6 +331,10 @@
                         logoThree: {
                             logo:'mdi-upload',
                             color:'white'
+                        },
+                        logoFour: {
+                            logo:'mdi-upload',
+                            color:'white'
                         }
 					}
 				},
@@ -201,49 +352,76 @@
                         .then((response) => {
                             this.berkass = response
                         })
-                    },
-                    uploadOne() {
-                        this.logoOne.logo = this.uploadLogo.in
-                        return new Promise((resolve, reject) => {
-                            const dataOne = new FormData()
-                            dataOne.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
-                            dataOne.append('file',this.uploadBerkas.toefl)
-                            dataOne.append('id',this.berkass[0].id)
-                            dataOne.append('transkrip_file',this.berkass[0].transkrip_file)
-                            dataOne.append('which_one','toefl')
-                            axios.post(
-                                '<?= base_url()?>api/Berkas',
-                                dataOne,
-                                {headers: {'Content-Type': 'multipart/form-data'}}
-                            )
+                        .then(() => {
+                            return new Promise((resolve, reject) => {
+                                axios.get('<?= base_url()?>api/User',{params: {id: <?=$id?>}})
+                                    .then(response => {
+                                        resolve(response.data)
+                                    }) .catch(err => {
+                                        if(err.response.status == 500) reject('Server Error')
+                                    })
+                            })
                             .then((response) => {
-                                resolve(response.data)
-                            }) .catch(err => {
-                                if(err.response.status == 500) reject('Server Error')
-                                if(err.response.status == 401) reject(err.response.data)
+                                this.self = response
+                                this.uploadBeritaAcara.id_dosen_pembimbing = response[0].id_dosen_pembimbing
+                                this.uploadBeritaAcara.id_ketua_penguji = response[0].id_ketua_penguji
+                                this.uploadBeritaAcara.id_dosen_penguji = response[0].id_dosen_penguji
                             })
                         })
-                        .then(() => {
-                            this.logoOne.logo = this.uploadLogo.done
-                            this.logoOne.color = this.uploadLogo.doneColor
-                        }) .catch((err) => {
-                            if(err.message == "ONLY ACCEPT PDF FILE TYPE") {
-                                this.logoOne.logo = this.uploadLogo.error
-                                this.logoOne.color = this.uploadLogo.errorColor
-                            }
-                        }) .finally(() => {
-                            this.get()
-                        })
+                    },
+                    dayFormat(date) {
+						let i = new Date(date).getDay(date)
+						var dayOftheWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+						return dayOftheWeek[i]
+					},
+                    uploadOne() {
+                        if(this.$refs.form.validate()) {
+                            this.logoOne.logo = this.uploadLogo.in
+                            return new Promise((resolve, reject) => {
+                                const dataOne = new FormData()
+                                dataOne.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
+                                dataOne.append('file',this.uploadBerkas.toefl)
+                                dataOne.append('id',this.berkass[0].id)
+                                dataOne.append('which_one','toefl')
+                                if(this.berkass[0].bimbingan_file != null) dataOne.append('bimbingan_file',this.berkass[0].bimbingan_file)
+                                if(this.berkass[0].skripsi_file != null) dataOne.append('skripsi_file',this.berkass[0].skripsi_file)
+                                if(this.berkass[0].transkrip_file != null) dataOne.append('transkrip_file',this.berkass[0].transkrip_file)
+                                axios.post(
+                                    '<?= base_url()?>api/Berkas',
+                                    dataOne,
+                                    {headers: {'Content-Type': 'multipart/form-data'}}
+                                )
+                                .then((response) => {
+                                    resolve(response.data)
+                                }) .catch(err => {
+                                    if(err.response.status == 500) reject('Server Error')
+                                    if(err.response.status == 401) reject(err.response.data)
+                                })
+                            })
+                            .then(() => {
+                                this.logoOne.logo = this.uploadLogo.done
+                                this.logoOne.color = this.uploadLogo.doneColor
+                            }) .catch((err) => {
+                                if(err.message == "ONLY ACCEPT PDF FILE TYPE") {
+                                    this.logoOne.logo = this.uploadLogo.error
+                                    this.logoOne.color = this.uploadLogo.errorColor
+                                }
+                            }) .finally(() => {
+                                this.get()
+                            })
+                        }
                     },
                     uploadTwo() {
+                        this.logoTwo.logo = this.uploadLogo.in
                         return new Promise((resolve, reject) => {
                             const dataTwo = new FormData()
                             dataTwo.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
                             dataTwo.append('file',this.uploadBerkas.fileSkripsi)
                             dataTwo.append('id',this.berkass[0].id)
-                            dataTwo.append('transkrip_file',this.berkass[0].transkrip_file)
                             dataTwo.append('which_one','skripsi')
-                            dataTwo.append('toefl_file',this.berkass[0].toefl_file)
+                            if(this.berkass[0].transkrip_file != null) dataTwo.append('transkrip_file',this.berkass[0].transkrip_file)
+                            if(this.berkass[0].toefl_file != null) dataTwo.append('toefl_file',this.berkass[0].toefl_file)
+                            if(this.berkass[0].bimbingan_file != null) dataTwo.append('bimbingan_file',this.berkass[0].bimbingan_file)
                             axios.post(
                                 '<?= base_url()?>api/Berkas',
                                 dataTwo,
@@ -269,15 +447,16 @@
                         })
                     },
                     uploadThree() {
+                        this.logoThree.logo = this.uploadLogo.in
                         return new Promise((resolve, reject) => {
                             const dataThree = new FormData()
                             dataThree.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
                             dataThree.append('file',this.uploadBerkas.bimbingan)
                             dataThree.append('id',this.berkass[0].id)
-                            dataThree.append('transkrip_file',this.berkass[0].transkrip_file)
                             dataThree.append('which_one','bimbingan')
-                            dataThree.append('toefl_file',this.berkass[0].toefl_file)
-                            dataThree.append('skripsi_file',this.berkass[0].skripsi_file)
+                            if(this.berkass[0].transkrip_file != null) dataThree.append('transkrip_file',this.berkass[0].transkrip_file)
+                            if(this.berkass[0].toefl_file != null) dataThree.append('toefl_file',this.berkass[0].toefl_file)
+                            if(this.berkass[0].skripsi_file != null) dataThree.append('skripsi_file',this.berkass[0].skripsi_file)
                             axios.post(
                                 '<?= base_url()?>api/Berkas',
                                 dataThree,
@@ -302,10 +481,72 @@
                             this.get()
                         })
                     },
-                    uploadBerkasAction() {
-                        this.uploadOne()
-                        this.uploadTwo()
-                        this.uploadThree()
+                    uploadFour() {
+                        this.logoFour.logo = this.uploadLogo.in
+                        return new Promise((resolve, reject) => {
+                            const dataFour = new FormData()
+                            dataFour.append('id_mahasiswa',this.berkass[0].id_mahasiswa)
+                            dataFour.append('file',this.uploadBerkas.transkrip)
+                            dataFour.append('id',this.berkass[0].id)
+                            dataFour.append('which_one','transkrip')
+                            if(this.berkass[0].toefl_file != null) dataFour.append('toefl_file',this.berkass[0].toefl_file)
+                            if(this.berkass[0].skripsi_file != null) dataFour.append('skripsi_file',this.berkass[0].skripsi_file)
+                            if(this.berkass[0].bimbingan_file != null) dataFour.append('bimbingan_file',this.berkass[0].bimbingan_file)
+                            axios.post(
+                                '<?= base_url()?>api/Berkas',
+                                dataFour,
+                                {headers: {'Content-Type': 'multipart/form-data'}}
+                            )
+                            .then((response) => {
+                                resolve(response.data)
+                            }) .catch(err => {
+                                if(err.response.status == 500) reject('Server Error')
+                                if(err.response.status == 401) reject(err.response.data)
+                            })
+                        })
+                        .then(() => {
+                            this.logoFour.logo = this.uploadLogo.done
+                            this.logoFour.color = this.uploadLogo.doneColor
+                        }) .catch((err) => {
+                            if(err.message == "ONLY ACCEPT PDF FILE TYPE") {
+                                this.logoFour.logo = this.uploadLogo.error
+                                this.logoFour.color = this.uploadLogo.errorColor
+                            }
+                        }) .finally(() => {
+                            this.get()
+                        })
+                    },
+                    uploadBeritaAcaraAction() {
+                        if(this.$refs.form.validate()) {
+                            return new Promise(( resolve, reject) => {
+                                const data = new FormData()
+                                data.append('id_mahasiswa',this.uploadBeritaAcara.id_mahasiswa)
+                                data.append('file',this.uploadBeritaAcara.file)
+                                data.append('date',this.uploadBeritaAcara.date)
+                                data.append('time',this.uploadBeritaAcara.time)
+                                data.append('id_dosen_pembimbing',this.uploadBeritaAcara.id_dosen_pembimbing)
+                                data.append('id_ketua_penguji',this.uploadBeritaAcara.id_ketua_penguji)
+                                data.append('id_dosen_penguji',this.uploadBeritaAcara.id_dosen_penguji)
+                                data.append('max_revisi',moment(this.uploadBeritaAcara.date).add('days', 14).format('YYYY-MM-DD'))
+                                axios.post('<?= base_url()?>api/Berita_Acara',data,{headers: {'Content-Type': 'multipart/form-data'}})
+                                    .then((response) => {
+                                        resolve(response.data)
+                                    }) .catch((err) => {
+                                        if(err.response.status == 500) reject(err.response.data)
+                                    })
+                            })
+                            .then((response) => {
+                                this.snackbarMessage = response.message
+                                this.snackbarColor = 'success'
+                            }) .catch(err => {
+                                this.snackbarMessage = err
+                                this.snackbarColor = 'error'
+                            }) .finally(() => {
+                                this.snackbar = true
+                                this.get()
+                                this.close()
+                            })
+                        }
                     },
                     logOut() {
                         window.location.href = '<?=base_url('Pages/logOut');?>'
@@ -313,11 +554,70 @@
                     close() {
                         if(this.uploadBerkasDialog) {
                             this.uploadBerkasDialog = false
+                        } else {
+                            if(this.uploadBeritaAcaraDialog) {
+                                this.uploadBeritaAcaraDialog = false
+                            }
                         }
                     },
 				},
 				
 				computed: {
+                    disabledOne() {
+                        if(this.berkass.length != 0) {
+                            if(this.berkass[0].toefl_file != null){
+                                this.logoOne.logo = this.uploadLogo.done
+                                this.logoOne.color = this.uploadLogo.doneColor
+                                return true
+                            }
+                        } else {
+                            if(this.logoOne.logo != this.uploadLogo.before) {
+                                return true
+                            }
+                        }return false
+                    },
+                    disabledTwo() {
+                        if(this.berkass.length != 0) {
+                            if(this.berkass[0].skripsi_file != null){
+                                this.logoTwo.logo = this.uploadLogo.done
+                                this.logoTwo.color = this.uploadLogo.doneColor
+                                return true
+                            }
+                        } else {
+                            if(this.logoTwo.logo != this.uploadLogo.before) {
+                                return true
+                            }
+                        }return false
+                    },
+                    disabledThree() {
+                        if(this.berkass.length != 0) {
+                            if(this.berkass[0].bimbingan_file != null){
+                                this.logoThree.logo = this.uploadLogo.done
+                                this.logoThree.color = this.uploadLogo.doneColor
+                                return true
+                            }
+                        } else {
+                            if(this.logoThree.logo != this.uploadLogo.before) {
+                                return true
+                            }
+                        }return false
+                    },
+                    disabledFour() {
+                        if(this.berkass.length != 0) {
+                            if(this.berkass[0].transkrip_file != null){
+                                this.logoFour.logo = this.uploadLogo.done
+                                this.logoFour.color = this.uploadLogo.doneColor
+                                return true
+                            }
+                        } else {
+                            if(this.logoFour.logo != this.uploadLogo.before) {
+                                return true
+                            }
+                        }return false
+                    },
+                    formatDate() {
+						return this.uploadBeritaAcara.date ? moment(this.uploadBeritaAcara.date).format('DD MMMM YYYY') : ''
+					},
 					//view Breakpoint
                     popUpBreakPoint() {
                         if (this.$vuetify.breakpoint.name == 'xs') {

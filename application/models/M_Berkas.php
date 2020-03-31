@@ -22,6 +22,13 @@ class M_Berkas extends CI_Model{
         return $this->db->insert_id();
     }
 
+    public function storeEmpty($id_mahasiswa) {
+        $this->db->insert($this::TABLE_NAME, array(
+            'id_mahasiswa' => $id_mahasiswa,
+        ));
+        return $this->db->insert_id();
+    }
+
     public function get_berkas_where_mahasiswa($id) {
         $this->db->select('*');
         $this->db->from($this::TABLE_NAME);

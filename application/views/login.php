@@ -59,6 +59,25 @@
                                                 @click:append="showPassword = !showPassword"
                                                 :rules='rules.password'
                                             ></v-text-field>
+                                            <v-select
+                                                v-if="registerForm"
+                                                :items="listDosen"
+                                                v-model="user.id_dosen_pembimbing"
+                                                label="Dosen Pembimbing"
+                                                item-text="nama"
+                                                item-value="id"
+                                                :rules="rules.dosen"
+                                            ></v-select>
+                                            <v-textarea
+                                                v-if="registerForm"
+                                                v-model="user.judul"
+                                                v-on:keyup.enter="register"
+                                                label="Judul Skripsi"
+                                                :rules="rules.judul"
+                                                :auto-grow="true"
+                                                outlined
+                                                rows="1"
+                                            ></v-textarea>
                                         </v-form>
                                     </v-card-text>
                                     <v-card-actions>
@@ -115,13 +134,20 @@
                 this.$vuetify.theme.dark = true
             },
 
+            mounted() {
+                this.get()
+            },
+
             data() {
                 return {
                     user: {
                         nomor:'',
                         nama:'',
-                        password:''
+                        password:'',
+                        id_dosen_pembimbing:'',
+                        judul:'',
                     },
+                    listDosen: [],
                     rules: {
                         nomor: [
                             v => !!v || 'NIM Wajib diisi',
@@ -133,6 +159,13 @@
                         nama: [
                             v => !!v || 'Nama Wajib diisi',
                             v => v.length > 4 || 'Nama Tidak Valid'
+                        ],
+                        dosen: [
+                            v => !!v || 'Dosen Pembimbing Wajib Diisi',
+                        ],
+                        judul: [
+                            v => !!v || 'Judul Wajib diisi',
+                            v => v.length > 5 || 'Judul Tidak Valid'
                         ]
                     },
                     showPassword: false,
@@ -149,6 +182,19 @@
             methods: {
                 showRegisterForm() {
                     this.registerForm = true
+                },
+                get() {
+                    return new Promise((resolve, reject) => {
+                        axios.get('<?= base_url()?>api/DosenList')
+                            .then((response) => {
+                                resolve(response.data)
+                            }) .catch((err) => {
+                                if(err.response.status == 500) reject('Server Error')
+                            })
+                    })
+                    .then((response) => {
+                        this.listDosen = response
+                    })
                 },
                 register() {
                     if(this.$refs.form.validate()) {
@@ -205,7 +251,7 @@
                             }
                         }) .finally(() => {
                             if(this.logInstatus) {
-                                window.location.href = '<?=base_url('Pages/home_mahasiswa');?>'
+                                window.location.href = '<?=base_url('Pages/home');?>'
                             } else {
                                 this.loading = false
                             }

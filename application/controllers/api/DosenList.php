@@ -6,7 +6,7 @@ require APPPATH . '/libraries/REST_Controller.php';
 
 use Restserver\Libraries\REST_Controller;
 
-class User extends REST_Controller {
+class DosenList extends REST_Controller {
 
     function __construct(){
         parent::__construct();
@@ -19,16 +19,9 @@ class User extends REST_Controller {
         }
     }
 
-
     public function index_get() {
-        $id = $this->get('id');
-        if(isset($id)) {
-            $result = $this->M_User->get_user_where($id);
-            $this->response($result,REST_Controller::HTTP_OK);
-        } else {
-            $result = $this->M_User->get_all_user();
-            $this->response($result,REST_Controller::HTTP_OK);
-        }
+        $result = $this->M_Dosen->get_all_dosen_for_regis();
+        $this->response($result,REST_Controller::HTTP_OK);
     }
 
 }

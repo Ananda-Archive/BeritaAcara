@@ -6,6 +6,10 @@ class M_User extends CI_Model{
     private $nama;
     private $nomor;
     private $password;
+    private $judul;
+    private $id_dosen_pembimbing;
+    private $id_ketua_penguji;
+    private $id_dosen_penguji;
     private $verified;
     const TABLE_NAME = 'user';
 
@@ -30,11 +34,13 @@ class M_User extends CI_Model{
         ));
     }
 
-    public function register($nama, $nomor, $password) {
+    public function register($nama, $nomor, $password, $judul, $id_dosen_pembimbing) {
         $this->db->insert($this::TABLE_NAME, array(
             'nama' => $nama,
             'nomor' => $nomor,
-            'password' => $password
+            'password' => $password,
+            'judul' => $judul,
+            'id_dosen_pembimbing' => $id_dosen_pembimbing
         ));
         return $this->db->insert_id();
     }
@@ -49,6 +55,20 @@ class M_User extends CI_Model{
     public function get_all_user() {
         $this->db->select('*');
         $this->db->from($this::TABLE_NAME);
+        return $this->db->get()->result_array();
+    }
+
+    public function verify_user($id_mahasiswa) {
+        $this->db->update($this::TABLE_NAME, array(
+            'verified' => 1
+        ), "id='{$id_mahasiswa}'");
+        return $this->db->affected_rows();
+    }
+
+    public function get_user_where_dosen($id) {
+        $this->db->select('*');
+        $this->db->from($this::TABLE_NAME);
+        $this->db->where("id_dosen_pembimbing='{$id}' OR id_ketua_penguji='{$id}' OR id_dosen_penguji='{$id}'");
         return $this->db->get()->result_array();
     }
 
