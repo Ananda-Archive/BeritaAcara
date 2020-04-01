@@ -42,67 +42,47 @@ class M_Berkas extends CI_Model{
         return $this->db->affected_rows();
     }
 
-    public function storeToefl($id,$id_mahasiswa,$file,$toefl_file_verified, $transkrip_file, $transkrip_file_verified, $skripsi_file, $skripsi_file_verified, $bimbingan_file, $bimbingan_file_verified) {
-        $this->db->insert($this::TABLE_NAME, array(
-            'id' => $id,
-            'id_mahasiswa' => $id_mahasiswa,
+    public function storeToefl($id,$file) {
+        $this->db->update($this::TABLE_NAME, array(
             'toefl_file' => $file,
-            'toefl_file_verified' => $toefl_file_verified,
-            'transkrip_file' => $transkrip_file,
-            'transkrip_file_verified' => $transkrip_file_verified,
-            'skripsi_file' => $skripsi_file,
-            'skripsi_file_verified' => $skripsi_file_verified,
-            'bimbingan_file' => $bimbingan_file,
-            'bimbingan_file_verified' => $bimbingan_file_verified,
-        ));
-        return $this->db->insert_id();
+        ), "id='{$id}'");
+        return $this->db->affected_rows();
     }
 
-    public function storeTranskripNew($id,$id_mahasiswa, $toefl_file, $toefl_file_verified, $file, $transkrip_file_verified, $skripsi_file, $skripsi_file_verified, $bimbingan_file, $bimbingan_file_verified) {
-        $this->db->insert($this::TABLE_NAME, array(
-            'id' => $id,
-            'id_mahasiswa' => $id_mahasiswa,
-            'toefl_file' => $toefl_file,
-            'toefl_file_verified' => $toefl_file_verified,
+    public function storeTranskripNew($id,$file) {
+        $this->db->update($this::TABLE_NAME, array(
             'transkrip_file' => $file,
-            'transkrip_file_verified' => $transkrip_file_verified,
-            'skripsi_file' => $skripsi_file,
-            'skripsi_file_verified' => $skripsi_file_verified,
-            'bimbingan_file' => $bimbingan_file,
-            'bimbingan_file_verified' => $bimbingan_file_verified,
-        ));
-        return $this->db->insert_id();
+        ), "id='{$id}'");
+        return $this->db->affected_rows();
     }
 
-    public function storeSkripsi($id,$id_mahasiswa, $toefl_file, $toefl_file_verified, $transkrip_file, $transkrip_file_verified, $file, $skripsi_file_verified, $bimbingan_file, $bimbingan_file_verified) {
-        $this->db->insert($this::TABLE_NAME, array(
-            'id' => $id,
-            'id_mahasiswa' => $id_mahasiswa,
-            'toefl_file' => $toefl_file,
-            'toefl_file_verified' => $toefl_file_verified,
-            'transkrip_file' => $transkrip_file,
-            'transkrip_file_verified' => $transkrip_file_verified,
+    public function storeSkripsi($id,$file) {
+        $this->db->update($this::TABLE_NAME, array(
             'skripsi_file' => $file,
-            'skripsi_file_verified' => $skripsi_file_verified,
-            'bimbingan_file' => $bimbingan_file,
-            'bimbingan_file_verified' => $bimbingan_file_verified,
-        ));
-        return $this->db->insert_id();
+        ), "id='{$id}'");
+        return $this->db->affected_rows();
     }
 
-    public function storeBimbingan($id,$id_mahasiswa, $toefl_file, $toefl_file_verified, $transkrip_file, $transkrip_file_verified, $skripsi_file, $skripsi_file_verified, $file, $bimbingan_file_verified) {
-        $this->db->insert($this::TABLE_NAME, array(
-            'id' => $id,
-            'id_mahasiswa' => $id_mahasiswa,
-            'toefl_file' => $toefl_file,
-            'toefl_file_verified' => $toefl_file_verified,
-            'transkrip_file' => $transkrip_file,
-            'transkrip_file_verified' => $transkrip_file_verified,
-            'skripsi_file' => $skripsi_file,
-            'skripsi_file_verified' => $skripsi_file_verified,
+    public function storeBimbingan($id,$file) {
+        $this->db->update($this::TABLE_NAME, array(
             'bimbingan_file' => $file,
-            'bimbingan_file_verified' => $bimbingan_file_verified,
-        ));
-        return $this->db->insert_id();
+        ), "id='{$id}'");
+        return $this->db->affected_rows();
+    }
+
+    public function verify($which_one,$status,$id) {
+        $this->db->update($this::TABLE_NAME, array(
+            $which_one => $status
+        ), "id='{$id}'");
+        return $this->db->affected_rows();
+    }
+    public function reset($id) {
+        $this->db->update($this::TABLE_NAME, array(
+            'toefl_file_verified' => null,
+            'transkrip_file_verified' => null,
+            'skripsi_file_verified' => null,
+            'bimbingan_file_verified' => null,
+        ), "id='{$id}'");
+        return $this->db->affected_rows();
     }
 }

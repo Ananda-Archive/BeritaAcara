@@ -22,13 +22,17 @@ class User extends REST_Controller {
 
     public function index_get() {
         $id = $this->get('id');
+        $verif = $this->get('verif');
         if(isset($id)) {
             $result = $this->M_User->get_user_where($id);
             $this->response($result,REST_Controller::HTTP_OK);
         } else {
-            $result = $this->M_User->get_all_user();
-            $this->response($result,REST_Controller::HTTP_OK);
+            if(isset($verif)) {
+                $result = $this->M_User->get_all_unverified_user();
+                $this->response($result,REST_Controller::HTTP_OK);
+            } 
         }
     }
+    
 
 }

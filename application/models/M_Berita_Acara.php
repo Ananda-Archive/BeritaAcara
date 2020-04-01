@@ -14,6 +14,7 @@ class M_Berita_Acara extends CI_Model{
     private $id_ketua_penguji;
     private $id_dosen_penguji;
     private $nilai;
+    private $nilai_final;
     private $max_revisi;
     private $status;
     private $comment_dosen_pembimbing;
@@ -36,6 +37,15 @@ class M_Berita_Acara extends CI_Model{
     }
 
     public function get_berita_acara_active_where_dosen($id) {
-        return $this->db->query("SELECT * FROM berita_acara WHERE id IN (SELECT MAX(id) FROM berita_acara GROUP BY id_mahasiswa) AND (id_dosen_pembimbing = '$id' OR id_ketua_penguji = '$id' OR id_dosen_penguji = '$id') AND status is NULL")->result_array();
+        return $this->db->query("SELECT * FROM berita_acara WHERE id IN (SELECT MAX(id) FROM berita_acara GROUP BY id_mahasiswa) AND (id_dosen_pembimbing = '$id' OR id_ketua_penguji = '$id' OR id_dosen_penguji = '$id')")->result_array();
+    }
+
+    public function update($id,$datas) {
+        $result = $this->db->get_where($this::TABLE_NAME, $datas);
+        if($result->num_rows() > 0) return true;
+
+        $this->db->update($this::TABLE_NAME, $datas, "id='{$id}'");
+        
+        return $this->db->affected_rows();
     }
 }

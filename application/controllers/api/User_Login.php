@@ -165,28 +165,45 @@ class User_Login extends REST_Controller {
                         ), REST_Controller::HTTP_CREATED
                     );
                 } else {
-                    if($this->M_User->user_exist($nomor)->num_rows() > 0 && $this->M_Dosen->user_exist($nomor)->num_rows() > 0) {
+                    if($this->M_Admin->login($nomor,$password) ->num_rows() > 0) {
+                        $data = $this->M_Admin->login($nomor,$password)->row_array();
+                        $data_session = array(
+                            'id' => $data['id'],
+                            'nama' => 'Admin',
+                            'nomor' => $data['nomor'],
+                            'role' => 2
+                        );
+                        $this->session->set_userdata($data_session);
                         $this->response(
                             array(
-                                'status' => FALSE,
-                                'message' => $this::INCORRECT_PASSWORD_MESSAGE
-                            ), REST_Controller::HTTP_UNAUTHORIZED
+                                'status' => TRUE,
+                                'message' => $this::LOGIN_SUCCESS_MESSAGE
+                            ), REST_Controller::HTTP_CREATED
                         );
                     } else {
-                        if($this->M_User->user_exist($nomor)->num_rows() == 0 && $this->M_Dosen->user_exist($nomor)->num_rows() == 0) {
+                        if($this->M_User->user_exist($nomor)->num_rows() > 0 && $this->M_Dosen->user_exist($nomor)->num_rows() > 0) {
                             $this->response(
                                 array(
                                     'status' => FALSE,
-                                    'message' => $this::USER_NOT_FOUND_MESSAGE
+                                    'message' => $this::INCORRECT_PASSWORD_MESSAGE
                                 ), REST_Controller::HTTP_UNAUTHORIZED
                             );
                         } else {
-                            $this->response(
-                                array(
-                                    'status' => FALSE,
-                                    'message' => $this::LOGIN_FAILED_MESSAGE
-                                ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR
-                            );
+                            if($this->M_User->user_exist($nomor)->num_rows() == 0 && $this->M_Dosen->user_exist($nomor)->num_rows() == 0) {
+                                $this->response(
+                                    array(
+                                        'status' => FALSE,
+                                        'message' => $this::USER_NOT_FOUND_MESSAGE
+                                    ), REST_Controller::HTTP_UNAUTHORIZED
+                                );
+                            } else {
+                                $this->response(
+                                    array(
+                                        'status' => FALSE,
+                                        'message' => $this::LOGIN_FAILED_MESSAGE
+                                    ), REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                                );
+                            }
                         }
                     }
                 }

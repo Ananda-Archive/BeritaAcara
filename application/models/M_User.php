@@ -57,6 +57,13 @@ class M_User extends CI_Model{
         $this->db->from($this::TABLE_NAME);
         return $this->db->get()->result_array();
     }
+    
+    public function get_all_unverified_user() {
+        $this->db->select('*');
+        $this->db->from($this::TABLE_NAME);
+        $this->db->where("verified != 1");
+        return $this->db->get()->result_array();
+    }
 
     public function verify_user($id_mahasiswa) {
         $this->db->update($this::TABLE_NAME, array(

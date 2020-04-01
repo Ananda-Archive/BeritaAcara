@@ -84,4 +84,78 @@ class Berita_Acara extends REST_Controller {
         }
     }
 
+    public function index_put() {
+        $id = $this->put('id');
+        $nilai = $this->put('nilai');
+        $nilai_final = $this->put('nilai_final');
+        $status = $this->put('status');
+        $max_revisi = $this->put('max_revisi');
+        $comment_dosen_pembimbing = $this->put('comment_dosen_pembimbing');
+        $comment_ketua_penguji = $this->put('comment_ketua_penguji');
+        $comment_dosen_penguji = $this->put('comment_dosen_penguji');
+        $ttd_dosen_pembimbing = $this->put('ttd_dosen_pembimbing');
+        $ttd_ketua_penguji = $this->put('ttd_ketua_penguji');
+        $ttd_dosen_penguji = $this->put('ttd_dosen_penguji');
+        $datas = array();
+        if(!isset($id)) {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
+                ),
+                REST_Controller::HTTP_BAD_REQUEST
+            );
+            return;
+        }
+        $datas = array_merge($datas, array('id' => $id));
+        if(isset($nilai)){
+            $datas = array_merge($datas, array('nilai' => $nilai));
+        }
+        if(isset($nilai_final)){
+            $datas = array_merge($datas, array('nilai_final' => $nilai_final));
+        }
+        if(isset($status)){
+            $datas = array_merge($datas, array('status' => $status));
+        }
+        if(isset($max_revisi)){
+            $datas = array_merge($datas, array('max_revisi' => $max_revisi));
+        }
+        if(isset($comment_dosen_pembimbing)){
+            $datas = array_merge($datas, array('comment_dosen_pembimbing' => $comment_dosen_pembimbing));
+        }
+        if(isset($comment_ketua_penguji)){
+            $datas = array_merge($datas, array('comment_ketua_penguji' => $comment_ketua_penguji));
+        }
+        if(isset($comment_dosen_penguji)){
+            $datas = array_merge($datas, array('comment_dosen_penguji' => $comment_dosen_penguji));
+        }
+        if(isset($ttd_dosen_pembimbing)){
+            $datas = array_merge($datas, array('ttd_dosen_pembimbing' => $ttd_dosen_pembimbing));
+        }
+        if(isset($ttd_ketua_penguji)){
+            $datas = array_merge($datas, array('ttd_ketua_penguji' => $ttd_ketua_penguji));
+        }
+        if(isset($ttd_dosen_penguji)){
+            $datas = array_merge($datas, array('ttd_dosen_penguji' => $ttd_dosen_penguji));
+        }
+        if($this->M_Berita_Acara->update($id,$datas)) {
+            $this->response(
+                array(
+                    'status' => TRUE,
+                    'message' => $this::UPDATE_SUCCESS_MESSSAGE
+
+                ),
+                REST_Controller::HTTP_OK
+            );
+        } else {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::UPDATE_FAILED_MESSAGE
+                ),
+                REST_Controller::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
 }
