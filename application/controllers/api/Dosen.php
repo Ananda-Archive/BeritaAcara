@@ -19,6 +19,57 @@ class Dosen extends REST_Controller {
         }
     }
 
+    public function index_post() {
+        $nomor = $this->post('nomor');
+        $nama = $this->post('nama');
+        $password = hash('sha512',$this->post('nomor') . config_item('encryption_key'));
+        if(!isset($nomor)) {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::REQUIRED_PARAMETER_MESSAGE."nomor"
+                ), REST_Controller::HTTP_BAD_REQUEST
+            );
+            return;
+        }
+        if(!isset($nama)) {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::REQUIRED_PARAMETER_MESSAGE."nama"
+                ), REST_Controller::HTTP_BAD_REQUEST
+            );
+            return;
+        }
+        if($this->M_Dosen->get_by_nomor($nomor)->num_rows() == 0) {
+            if($this->M_Dosen->insert($nomor,$nama,$password)) {
+                $this->response(
+                    array(
+                        'status' => TRUE,
+                        'message' => $this::INSERT_SUCCESS_MESSSAGE
+                    ),
+                    REST_Controller::HTTP_CREATED
+                );
+            } else {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::INSERT_FAILED_MESSAGE
+                    ),
+                    REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                );
+            }
+        } else {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::NUM_FAILED_MESSAGE
+                ),
+                REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+    
     public function index_get() {
         $id_dosen = $this->get('id_dosen');
         if(isset($id_dosen)) {

@@ -38,4 +38,16 @@ class M_Admin extends CI_Model{
         
         return $this->db->affected_rows();
     }
+
+    public function get() {
+        $this->db->select('*');
+        $this->db->from('timeline');
+        return $this->db->get()->result_array();
+    }
+
+    public function getDate() {
+        $this->db->select('*');
+        $this->db->from('timeline');
+        return $this->db->get();
+    }
 }

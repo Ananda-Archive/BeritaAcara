@@ -20,6 +20,11 @@ class Time extends REST_Controller {
     }
 
 
+    public function index_get() {
+        $result = $this->M_Admin->get();
+        $this->response($result,REST_Controller::HTTP_OK);
+    }
+
     public function index_put() {
         $tanggal_mulai = $this->put('tanggal_mulai');
         $tanggal_berakhir = $this->put('tanggal_berakhir');

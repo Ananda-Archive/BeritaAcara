@@ -126,12 +126,15 @@ class User_Login extends REST_Controller {
             if($this->M_User->login($nomor,$password) ->num_rows() > 0) {
                 // Kalo udah di verify sama admin
                 if($this->M_User->is_verified($nomor,$password) ->num_rows() > 0) {
+                    $date = $this->M_Admin->getDate()->row_array();
                     $data = $this->M_User->login($nomor,$password)->row_array();
                     $data_session = array(
                         'id' => $data['id'],
                         'nama' => $data['nama'],
                         'nomor' => $data['nomor'],
-                        'role' => 0
+                        'role' => 0,
+                        'start' => $date['tanggal_mulai'],
+                        'end' => $date['tanggal_berakhir']
                     );
                     $this->session->set_userdata($data_session);
                     $this->response(

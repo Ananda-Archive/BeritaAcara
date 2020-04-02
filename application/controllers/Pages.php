@@ -14,13 +14,19 @@ class Pages extends CI_Controller {
 
     // Home Mahasiswa
     public function home() {
+        date_default_timezone_set('Asia/Jakarta');
+        $curr = date('Y-m-d');
         if($this->session->userdata('id')) {
             if($this->session->userdata('role') == 0) {
                 $data['id'] = $this->session->userdata('id');
                 $data['nama'] = $this->session->userdata('nama');
                 $data['nomor'] = $this->session->userdata('nomor');
                 $data['role'] = $this->session->userdata('role');
-                $this->load->view('home_mahasiswa',$data);
+                if($curr >= $this->session->userdata('start') && $curr <= $this->session->userdata('end')) {
+                    $this->load->view('home_mahasiswa',$data);
+                } else {
+                    $this->load->view('event',$data);
+                }
             } else {
                 if($this->session->userdata('role') == 1) {
                     $data['id'] = $this->session->userdata('id');

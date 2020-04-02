@@ -222,6 +222,21 @@ class Berkas extends REST_Controller {
         $transkrip_file_verified = $this->put('transkrip_file_verified');
         $bimbingan_file_verified = $this->put('bimbingan_file_verified');
         $id = $this->put('id');
+        $id_mahasiswa = $this->put('id_mahasiswa');
+        $reset = $this->put('reset');
+        if(isset($reset) && $reset == 1) {
+            if($this->M_Berkas->storeEmpty($id_mahasiswa)) {
+                $this->response(
+                    array(
+                        'status' => TRUE,
+                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
+    
+                    ),
+                    REST_Controller::HTTP_OK
+                );
+                return;
+            }
+        }
         $datas = array();
         if(!isset($id)) {
             $this->response(

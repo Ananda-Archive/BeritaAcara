@@ -28,4 +28,20 @@ class M_Dosen extends CI_Model{
         $this->nomor = $nomor;
         return $this->db->get_where($this::TABLE_NAME, "nomor={$nomor}");
     }
+
+    public function get_by_nomor($nomor) {
+        $this->nomor = $nomor;
+
+        return $this->db->get_where($this::TABLE_NAME, "nomor={$nomor}");
+    }
+
+    public function insert($nomor,$nama,$password) {
+        $this->db->insert($this::TABLE_NAME, array(
+            'nomor' => $nomor,
+            'nama' => $nama,
+            'password ' => $password,
+        ));
+        return $this->db->insert_id();
+    }
+    
 }

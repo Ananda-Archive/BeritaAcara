@@ -23,6 +23,14 @@ class M_User extends CI_Model{
         ));
     }
 
+    public function update($id,$datas) {
+        $result = $this->db->get_where($this::TABLE_NAME, $datas);
+        if($result->num_rows() > 0) return true;
+
+        $this->db->update($this::TABLE_NAME, $datas, "id='{$id}'");
+        return $this->db->affected_rows();
+    }
+
     public function is_verified($nomor,$password) {
         $this->nomor = $nomor;
         $this->password = $password;
