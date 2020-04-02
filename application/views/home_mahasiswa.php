@@ -383,9 +383,6 @@
                                 dataOne.append('file',this.uploadBerkas.toefl)
                                 dataOne.append('id',this.berkass[0].id)
                                 dataOne.append('which_one','toefl')
-                                if(this.berkass[0].bimbingan_file != null) dataOne.append('bimbingan_file',this.berkass[0].bimbingan_file)
-                                if(this.berkass[0].skripsi_file != null) dataOne.append('skripsi_file',this.berkass[0].skripsi_file)
-                                if(this.berkass[0].transkrip_file != null) dataOne.append('transkrip_file',this.berkass[0].transkrip_file)
                                 axios.post(
                                     '<?= base_url()?>api/Berkas',
                                     dataOne,
@@ -419,9 +416,6 @@
                             dataTwo.append('file',this.uploadBerkas.fileSkripsi)
                             dataTwo.append('id',this.berkass[0].id)
                             dataTwo.append('which_one','skripsi')
-                            if(this.berkass[0].transkrip_file != null) dataTwo.append('transkrip_file',this.berkass[0].transkrip_file)
-                            if(this.berkass[0].toefl_file != null) dataTwo.append('toefl_file',this.berkass[0].toefl_file)
-                            if(this.berkass[0].bimbingan_file != null) dataTwo.append('bimbingan_file',this.berkass[0].bimbingan_file)
                             axios.post(
                                 '<?= base_url()?>api/Berkas',
                                 dataTwo,
@@ -454,9 +448,6 @@
                             dataThree.append('file',this.uploadBerkas.bimbingan)
                             dataThree.append('id',this.berkass[0].id)
                             dataThree.append('which_one','bimbingan')
-                            if(this.berkass[0].transkrip_file != null) dataThree.append('transkrip_file',this.berkass[0].transkrip_file)
-                            if(this.berkass[0].toefl_file != null) dataThree.append('toefl_file',this.berkass[0].toefl_file)
-                            if(this.berkass[0].skripsi_file != null) dataThree.append('skripsi_file',this.berkass[0].skripsi_file)
                             axios.post(
                                 '<?= base_url()?>api/Berkas',
                                 dataThree,
@@ -489,9 +480,6 @@
                             dataFour.append('file',this.uploadBerkas.transkrip)
                             dataFour.append('id',this.berkass[0].id)
                             dataFour.append('which_one','transkrip')
-                            if(this.berkass[0].toefl_file != null) dataFour.append('toefl_file',this.berkass[0].toefl_file)
-                            if(this.berkass[0].skripsi_file != null) dataFour.append('skripsi_file',this.berkass[0].skripsi_file)
-                            if(this.berkass[0].bimbingan_file != null) dataFour.append('bimbingan_file',this.berkass[0].bimbingan_file)
                             axios.post(
                                 '<?= base_url()?>api/Berkas',
                                 dataFour,

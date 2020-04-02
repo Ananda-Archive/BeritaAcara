@@ -181,7 +181,7 @@ class User_Login extends REST_Controller {
                             ), REST_Controller::HTTP_CREATED
                         );
                     } else {
-                        if($this->M_User->user_exist($nomor)->num_rows() > 0 && $this->M_Dosen->user_exist($nomor)->num_rows() > 0) {
+                        if($this->M_User->user_exist($nomor)->num_rows() > 0 || $this->M_Dosen->user_exist($nomor)->num_rows() > 0) {
                             $this->response(
                                 array(
                                     'status' => FALSE,
@@ -189,7 +189,7 @@ class User_Login extends REST_Controller {
                                 ), REST_Controller::HTTP_UNAUTHORIZED
                             );
                         } else {
-                            if($this->M_User->user_exist($nomor)->num_rows() == 0 && $this->M_Dosen->user_exist($nomor)->num_rows() == 0) {
+                            if($this->M_User->user_exist($nomor)->num_rows() == 0 || $this->M_Dosen->user_exist($nomor)->num_rows() == 0) {
                                 $this->response(
                                     array(
                                         'status' => FALSE,

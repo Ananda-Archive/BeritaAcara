@@ -9,7 +9,12 @@ class M_Berkas extends CI_Model{
     private $transkrip_file;
     private $transkrip_file_verified;
     private $skripsi_file;
-    private $skripsi_file_verified;
+    private $skripsi_file_verified_dosen_pembimbing;
+    private $skripsi_file_verified_ketua_penguji;
+    private $skripsi_file_verified_dosen_penguji;
+    private $skripsi_file_revisi_dosen_pembimbing;
+    private $skripsi_file_revisi_ketua_penguji;
+    private $skripsi_file_revisi_dosen_penguji;
     private $bimbingan_file;
     private $bimbingan_file_verified;
     const TABLE_NAME = 'berkas';
@@ -19,6 +24,11 @@ class M_Berkas extends CI_Model{
             'id_mahasiswa' => $id_mahasiswa,
             'transkrip_file' => $file,
         ));
+        return $this->db->insert_id();
+    }
+
+    public function revisi($datas) {
+        $this->db->insert($this::TABLE_NAME,$datas);
         return $this->db->insert_id();
     }
 
@@ -70,19 +80,32 @@ class M_Berkas extends CI_Model{
         return $this->db->affected_rows();
     }
 
-    public function verify($which_one,$status,$id) {
+    public function storeRevisiDosenPembimbing($id,$file) {
         $this->db->update($this::TABLE_NAME, array(
-            $which_one => $status
+            'skripsi_file_revisi_dosen_pembimbing' => $file,
         ), "id='{$id}'");
         return $this->db->affected_rows();
     }
-    public function reset($id) {
+
+    public function storeRevisiKetuaPenguji($id,$file) {
         $this->db->update($this::TABLE_NAME, array(
-            'toefl_file_verified' => null,
-            'transkrip_file_verified' => null,
-            'skripsi_file_verified' => null,
-            'bimbingan_file_verified' => null,
+            'skripsi_file_revisi_ketua_penguji' => $file,
         ), "id='{$id}'");
+        return $this->db->affected_rows();
+    }
+
+    public function storeRevisiDosenPenguji($id,$file) {
+        $this->db->update($this::TABLE_NAME, array(
+            'skripsi_file_revisi_dosen_penguji' => $file,
+        ), "id='{$id}'");
+        return $this->db->affected_rows();
+    }
+
+    public function verify($id,$datas) {
+        $result = $this->db->get_where($this::TABLE_NAME, $datas);
+        if($result->num_rows() > 0) return true;
+
+        $this->db->update($this::TABLE_NAME, $datas, "id='{$id}'");
         return $this->db->affected_rows();
     }
 }

@@ -23,14 +23,15 @@ class Berkas extends REST_Controller {
         if($this->session->userdata('id')) {
             $id = $this->post('id');
             $id_mahasiswa = $this->post('id_mahasiswa');
+            $nomor_mahasiswa = $this->post('nomor_mahasiswa');
             $toefl_file = $this->post('toefl_file');
-            $toefl_file_verified = $this->post('toefl_file_verified');
+            // $toefl_file_verified = $this->post('toefl_file_verified');
             $transkrip_file = $this->post('transkrip_file');
-            $transkrip_file_verified = $this->post('transkrip_file_verified');
+            // $skripsi_file_verified_ketua_penguji = $this->post('skripsi_file_verified_ketua_penguji');
             $skripsi_file = $this->post('skripsi_file');
-            $skripsi_file_verified = $this->post('skripsi_file_verified');
+            // $skripsi_file_verified = $this->post('skripsi_file_verified');
             $bimbingan_file = $this->post('bimbingan_file');
-            $bimbingan_file_verified = $this->post('bimbingan_file_verified');
+            // $bimbingan_file_verified = $this->post('bimbingan_file_verified');
             $which_one = $this->post('which_one');
             $file = $this->post('file');
             date_default_timezone_set('Asia/Jakarta');
@@ -113,12 +114,72 @@ class Berkas extends REST_Controller {
                                     );
                                 }
                             } else {
-                                $this->response(
-                                    array(
-                                        'status' => FALSE,
-                                        'message' => $this::UPDATE_FAILED_MESSAGE
-                                    ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
-                                );
+                                if($which_one == 'revisi_dosen_pembimbing') {
+                                    $filename = $nomor_mahasiswa . '-revisiDosenPembimbing-' . date('dmY-His') . '.pdf';
+                                    if($this->M_Berkas->storeRevisiDosenPembimbing($id,base_url('assets/berkas/').$filename)) {
+                                        $moveToDir = move_uploaded_file($tempfilename, $dir.$filename);
+                                        $this->response(
+                                            array(
+                                                'status' => TRUE,
+                                                'message' => base_url('assets/berkas/').$filename
+                                            ), REST_Controller::HTTP_OK
+                                        ); 
+                                    } else {
+                                        $this->response(
+                                            array(
+                                                'status' => FALSE,
+                                                'message' => base_url('assets/berkas/').$filename
+                                            ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                                        );
+                                    }
+                                } else {
+                                    if($which_one == 'revisi_ketua_penguji') {
+                                        $filename = $nomor_mahasiswa . '-revisiKetuaPenguji-' . date('dmY-His') . '.pdf';
+                                        if($this->M_Berkas->storeRevisiKetuaPenguji($id,base_url('assets/berkas/').$filename)) {
+                                            $moveToDir = move_uploaded_file($tempfilename, $dir.$filename);
+                                            $this->response(
+                                                array(
+                                                    'status' => TRUE,
+                                                    'message' => base_url('assets/berkas/').$filename
+                                                ), REST_Controller::HTTP_OK
+                                            ); 
+                                        } else {
+                                            $this->response(
+                                                array(
+                                                    'status' => FALSE,
+                                                    'message' => $this::UPDATE_FAILED_MESSAGE
+                                                ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                                            );
+                                        }
+                                    } else {
+                                        if($which_one == 'revisi_dosen_penguji') {
+                                            $filename = $nomor_mahasiswa . '-revisiDosenPenguji-' . date('dmY-His') . '.pdf';
+                                            if($this->M_Berkas->storeRevisiDosenPenguji($id,base_url('assets/berkas/').$filename)) {
+                                                $moveToDir = move_uploaded_file($tempfilename, $dir.$filename);
+                                                $this->response(
+                                                    array(
+                                                        'status' => TRUE,
+                                                        'message' => base_url('assets/berkas/').$filename
+                                                    ), REST_Controller::HTTP_OK
+                                                ); 
+                                            } else {
+                                                $this->response(
+                                                    array(
+                                                        'status' => FALSE,
+                                                        'message' => $this::UPDATE_FAILED_MESSAGE
+                                                    ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                                                );
+                                            }
+                                        } else {
+                                            $this->response(
+                                                array(
+                                                    'status' => FALSE,
+                                                    'message' => $this::UPDATE_FAILED_MESSAGE
+                                                ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                                            );
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -155,64 +216,59 @@ class Berkas extends REST_Controller {
 
     public function index_put() {
         $toefl_file_verified = $this->put('toefl_file_verified');
+        $skripsi_file_verified_dosen_pembimbing = $this->put('skripsi_file_verified_dosen_pembimbing');
+        $skripsi_file_verified_ketua_penguji = $this->put('skripsi_file_verified_ketua_penguji');
+        $skripsi_file_verified_dosen_penguji = $this->put('skripsi_file_verified_dosen_penguji');
         $transkrip_file_verified = $this->put('transkrip_file_verified');
-        $skripsi_file_verified = $this->put('skripsi_file_verified');
         $bimbingan_file_verified = $this->put('bimbingan_file_verified');
-        $reset = $this->put('reset');
         $id = $this->put('id');
-        if(isset($toefl_file_verified)) {
-            $which_one = 'toefl_file_verified';
-            if($this->M_Berkas->verify($which_one,$toefl_file_verified,$id)) {
-                $this->response(
-                    array(
-                        'status' => TRUE,
-                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
-                    ), REST_Controller::HTTP_OK
-                );
-            }
+        $datas = array();
+        if(!isset($id)) {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
+                ),
+                REST_Controller::HTTP_BAD_REQUEST
+            );
+            return;
         }
-        if(isset($transkrip_file_verified)) {
-            $which_one = 'transkrip_file_verified';
-            if($this->M_Berkas->verify($which_one,$transkrip_file_verified,$id)) {
-                $this->response(
-                    array(
-                        'status' => TRUE,
-                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
-                    ), REST_Controller::HTTP_OK
-                );
-            }
+        $datas = array_merge($datas, array('id' => $id));
+        if(isset($toefl_file_verified)){
+            $datas = array_merge($datas, array('toefl_file_verified' => $toefl_file_verified));
         }
-        if(isset($skripsi_file_verified)) {
-            $which_one = 'skripsi_file_verified';
-            if($this->M_Berkas->verify($which_one,$skripsi_file_verified,$id)) {
-                $this->response(
-                    array(
-                        'status' => TRUE,
-                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
-                    ), REST_Controller::HTTP_OK
-                );
-            }
+        if(isset($skripsi_file_verified_dosen_pembimbing)){
+            $datas = array_merge($datas, array('skripsi_file_verified_dosen_pembimbing' => $skripsi_file_verified_dosen_pembimbing));
         }
-        if(isset($bimbingan_file_verified)) {
-            $which_one = 'bimbingan_file_verified';
-            if($this->M_Berkas->verify($which_one,$bimbingan_file_verified,$id)) {
-                $this->response(
-                    array(
-                        'status' => TRUE,
-                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
-                    ), REST_Controller::HTTP_OK
-                );
-            }
+        if(isset($skripsi_file_verified_ketua_penguji)){
+            $datas = array_merge($datas, array('skripsi_file_verified_ketua_penguji' => $skripsi_file_verified_ketua_penguji));
         }
-        if($reset == 1) {
-            if($this->M_Berkas->reset($id)) {
-                $this->response(
-                    array(
-                        'status' => TRUE,
-                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
-                    ), REST_Controller::HTTP_OK
-                );
-            }
+        if(isset($skripsi_file_verified_dosen_penguji)){
+            $datas = array_merge($datas, array('skripsi_file_verified_dosen_penguji' => $skripsi_file_verified_dosen_penguji));
+        }
+        if(isset($transkrip_file_verified)){
+            $datas = array_merge($datas, array('transkrip_file_verified' => $transkrip_file_verified));
+        }
+        if(isset($bimbingan_file_verified)){
+            $datas = array_merge($datas, array('bimbingan_file_verified' => $bimbingan_file_verified));
+        }
+        if($this->M_Berkas->verify($id,$datas)) {
+            $this->response(
+                array(
+                    'status' => TRUE,
+                    'message' => $this::UPDATE_SUCCESS_MESSSAGE
+
+                ),
+                REST_Controller::HTTP_OK
+            );
+        } else {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::UPDATE_FAILED_MESSAGE
+                ),
+                REST_Controller::HTTP_BAD_REQUEST
+            );
         }
     }
 
