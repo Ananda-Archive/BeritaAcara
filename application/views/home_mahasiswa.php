@@ -234,6 +234,49 @@
                                         </v-card-text>
                                     </v-card>
                                 </v-dialog>
+                                <v-dialog persistent v-model="changePasswordOpenDialog" max-width="700px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Ganti Password</span>
+                                            <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-form ref="formPassword" class="px-2">
+                                            <v-card-text>
+                                                <v-row>
+                                                    <v-col>
+                                                    <v-col cols="12">
+                                                        <v-text-field
+                                                            v-model="passwordAfter"
+                                                            label="Password Baru"
+                                                            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                                            :type="showPassword ? 'text' : 'password'"
+                                                            @click:append="showPassword = !showPassword"
+                                                            :rules='rules.passwordAfter'
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <v-text-field
+                                                            v-model="passwordAfterConfirmation"
+                                                            label="Konfirmasi Password"
+                                                            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                                            :type="showPassword ? 'text' : 'password'"
+                                                            @click:append="showPassword = !showPassword"
+                                                            :rules='rules.passwordConfirm'
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-text>
+                                        </v-form>
+                                        <v-card-actions>
+                                            <v-container>
+                                                <v-row justify="center">
+                                                    <v-btn class="mt-n8" color="red darken-1" text @click="close">Cancel</v-btn>
+                                                    <v-btn class="mt-n8" color="green white--text" @click="changePassword">Change Password</v-btn>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
                             </v-row>
                         </v-container>
                     </v-layout>
@@ -276,6 +319,7 @@
                         uploadBeritaAcaraDialog: false,
                         showDatePicker:false,
                         showTimePicker:false,
+                        changePasswordOpenDialog: false,
                         // Data preparation for JSON
                         uploadBerkas: {
                             toefl:null,
@@ -294,6 +338,8 @@
                             id_ketua_penguji:null,
                             id_dosen_penguji:null
                         },
+                        passwordAfter:'',
+                        passwordAfterConfirmation:'',
                         // Snackbar goes here
                         snackbar: false,
                         snackbarMessage: '',
@@ -308,7 +354,16 @@
 							],
                             file: [
                                 v => !!v || 'File is required',
-                            ]
+                            ],
+                            passwordAfter: [
+								v => !!v || 'Password Wajib diisi',
+                                v => v == this.passwordAfter || 'Password Konfirmasi Harus Sama Dengan Password Baru',
+								v => v.length>=8 || 'Minimal 8 Karakter',
+							],
+							passwordConfirm: [
+								v => !!v || 'Password Wajib diisi',
+                                v => v == this.passwordAfter || 'Password Konfirmasi Harus Sama Dengan Password Baru',
+							]
                         },
                         // etc
                         uploadLogo: {
@@ -335,7 +390,8 @@
                         logoFour: {
                             logo:'mdi-upload',
                             color:'white'
-                        }
+                        },
+                        showPassword: false,
 					}
 				},
 
@@ -545,9 +601,45 @@
                         } else {
                             if(this.uploadBeritaAcaraDialog) {
                                 this.uploadBeritaAcaraDialog = false
+                            } else {
+                                if(this.changePasswordOpenDialog) {
+                                    this.changePasswordOpenDialog = false
+                                    this.passwordAfter = ''
+                                    this.passwordAfterConfirmation = ''
+                                }
                             }
                         }
                     },
+                    changePasswordOpenDialogFunc() {
+                        this.changePasswordOpenDialog = true
+                    },
+                    changePassword() {
+                        if(this.$refs.formPassword.validate()) {
+                            return new Promise((resolve, reject) => {
+                                let data = {
+                                    id: <?=$id;?>,
+                                    password: this.passwordAfter
+                                }
+                                axios.put('<?= base_url()?>api/User', data)
+                                    .then(response => {
+                                                resolve(response.data)
+                                            }) .catch(err => {
+                                                if(err.response.status == 500) reject(err.response.data)
+                                            })
+                            })
+                            .then((response) => {
+                                this.snackbarMessage = response.message
+                                this.snackbarColor = 'success'
+                            }) .catch(err => {
+                                this.snackbarMessage = err
+                                this.snackbarColor = 'error'
+                            }) .finally(() => {
+                                this.snackbar = true
+                                this.get()
+                                this.close()
+                            })
+                        }
+                    }
 				},
 				
 				computed: {

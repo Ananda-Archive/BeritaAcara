@@ -43,5 +43,13 @@ class M_Dosen extends CI_Model{
         ));
         return $this->db->insert_id();
     }
+
+    public function update($id,$datas) {
+        $result = $this->db->get_where($this::TABLE_NAME, $datas);
+        if($result->num_rows() > 0) return true;
+
+        $this->db->update($this::TABLE_NAME, $datas, "id='{$id}'");
+        return $this->db->affected_rows();
+    }
     
 }
