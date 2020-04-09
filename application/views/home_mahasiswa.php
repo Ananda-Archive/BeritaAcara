@@ -30,11 +30,6 @@
                                                 <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
                                             </v-toolbar>
                                             <v-card-text>
-                                                <v-col cols='12' class='text-center mb-n12'>
-                                                    <v-card-text class="red--text">--> FILE HARUS FORMAT PDF & UPLOAD HANYA BISA SEKALI <--</v-card-text>
-                                                </v-col>
-                                            </v-card-text>
-                                            <v-card-text>
                                                 <v-col cols='12'>
                                                     <v-form ref='form'>
                                                         <v-file-input
@@ -46,11 +41,10 @@
                                                             outlined
                                                             accept="application/pdf"
                                                             class="mt-4"
-                                                            :disabled="disabledOne"
                                                             :clearable="logoOne.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon @click="uploadOne" :disabled="uploadBerkas.toefl == null" :color="logoOne.color">{{logoOne.logo}}</v-icon>
+                                                                <v-icon @click="uploadOne" :color="logoOne.color">{{logoOne.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
@@ -66,11 +60,10 @@
                                                             outlined
                                                             accept="application/pdf"
                                                             class="mt-n5"
-                                                            :disabled="disabledTwo"
                                                             :clearable="logoTwo.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon @click="uploadTwo" :disabled="uploadBerkas.fileSkripsi == null" :color="logoTwo.color">{{logoTwo.logo}}</v-icon>
+                                                                <v-icon @click="uploadTwo" :color="logoTwo.color">{{logoTwo.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
@@ -86,11 +79,10 @@
                                                             outlined
                                                             accept="application/pdf"
                                                             class="mt-n5"
-                                                            :disabled="disabledThree"
                                                             :clearable="logoThree.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon @click="uploadThree" :disabled="uploadBerkas.bimbingan == null" :color="logoThree.color">{{logoThree.logo}}</v-icon>
+                                                                <v-icon @click="uploadThree" :color="logoThree.color">{{logoThree.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
@@ -106,21 +98,25 @@
                                                             outlined
                                                             accept="application/pdf"
                                                             class="mt-n5"
-                                                            :disabled="disabledFour"
                                                             :clearable="logoFour.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon @click="uploadFour" :disabled="uploadBerkas.transkrip == null" :color="logoFour.color">{{logoFour.logo}}</v-icon>
+                                                                <v-icon @click="uploadFour" :color="logoFour.color">{{logoFour.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
                                                     </v-form>
                                                 </v-col>
                                             </v-card-text>
-                                            <v-card-text>
-                                                <v-col cols='12' class='mt-n12 text-center'>
-                                                    <v-card-text class='mt-n6 red--text'>REFRESH PAGE JIKA GAGAL UPLOAD</v-card-text>
-                                                </v-col>
-                                            </v-card-text>
+                                            <v-divider class="mt-n8"></v-divider>
+                                            <v-card-actions>
+                                                <v-container>
+                                                    <v-row justify="center">
+                                                        <v-btn :disabled="berkass[0].skripsi_file_revisi_dosen_pembimbing == null" class="mr-4" color="blue white--text" @click="getBerkasDosenPembimbing">Revisi Dosen Pembimbing</v-btn>
+                                                        <v-btn :disabled="berkass[0].skripsi_file_revisi_ketua_penguji == null" class="mr-4" color="blue white--text" @click="getBerkasKetuaPenguji">Revisi Ketua Penguji</v-btn>
+                                                        <v-btn :disabled="berkass[0].skripsi_file_revisi_dosen_penguji == null" color="blue white--text" @click="getBerkasDosenPenguji">Revisi Dosen Penguji</v-btn>
+                                                    </v-row>
+                                                </v-container>
+                                            </v-card-actions>
                                         </v-card>
                                     </v-dialog>
                                 </v-col>
@@ -430,6 +426,15 @@
 						var dayOftheWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 						return dayOftheWeek[i]
 					},
+                    getBerkasDosenPembimbing() {
+                        window.open(this.berkass[0].skripsi_file_revisi_dosen_pembimbing, '_blank');
+                    },
+                    getBerkasKetuaPenguji() {
+                        window.open(this.berkass[0].skripsi_file_revisi_ketua_penguji, '_blank');
+                    },
+                    getBerkasDosenPenguji() {
+                        window.open(this.berkass[0].skripsi_file_revisi_dosen_penguji, '_blank');
+                    },
                     uploadOne() {
                         if(this.$refs.form.validate()) {
                             this.logoOne.logo = this.uploadLogo.in

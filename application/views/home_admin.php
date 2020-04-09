@@ -268,7 +268,7 @@
 													<v-autocomplete
 														v-model="mahasiswa.id_ketua_penguji"
 														:items="listDosen"
-														label="Dosen Pembimbing"
+														label="Ketua Penguji"
 														chips
 														dense
 														:clearable="true"
@@ -294,7 +294,7 @@
 													<v-autocomplete
 														v-model="mahasiswa.id_dosen_penguji"
 														:items="listDosen"
-														label="Dosen Pembimbing"
+														label="Dosen Penguji"
 														chips
 														dense
 														:clearable="true"
