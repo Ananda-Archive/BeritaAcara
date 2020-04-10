@@ -41,6 +41,13 @@ class Pages extends CI_Controller {
                         $data['nomor'] = $this->session->userdata('nomor');
                         $data['role'] = $this->session->userdata('role');
                         $this->load->view('home_admin',$data);
+                    } else {
+                        if($this->session->userdata('role') == 3) {
+                            $data['id'] = $this->session->userdata('id');
+                            $data['nama'] = $this->session->userdata('nama');
+                            $data['role'] = $this->session->userdata('role');
+                            $this->load->view('home_departemen',$data);
+                        }
                     }
                 }
             }

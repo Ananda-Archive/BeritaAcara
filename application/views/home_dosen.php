@@ -326,6 +326,36 @@
                                         </v-card-actions>
                                     </v-card>
                                 </v-dialog>
+                                <v-dialog v-model="changeJadwalDialog" persistent max-width="700px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Ganti Password</span>
+                                            <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-card-text>
+                                            <v-col cols='12'>
+                                                <v-form ref='form'>
+                                                    <v-file-input
+                                                        v-model="jadwalFile"
+                                                        color="blue"
+                                                        label="Jadwal"
+                                                        placeholder="Select your file"
+                                                        prepend-icon=""
+                                                        outlined
+                                                        :rules="rules.file"
+                                                        accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf"
+                                                        class="mt-4"
+                                                    >
+                                                </v-form>
+                                                <v-card-actions>
+                                                        <v-row justify="center">
+                                                            <v-btn class="my-n4" color="green white--text" @click="uploadJadwal">Upload</v-btn>
+                                                        </v-row>
+                                                </v-card-actions>
+                                            </v-col>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
                             </v-row>
                         </v-container>
                     </v-layout>
@@ -367,6 +397,7 @@
                         showDatePicker: false,
                         detailsDialog: false,
                         changePasswordOpenDialog: false,
+                        changeJadwalDialog: false,
                         // Search goes here
                         searchMahasiswa:'',
                         // JSON
@@ -377,6 +408,7 @@
                         beritaAcara: {},
                         passwordAfter:'',
                         passwordAfterConfirmation:'',
+                        jadwalFile:null,
                         // Snackbar goes here
                         snackbar: false,
                         snackbarMessage: '',
@@ -397,12 +429,41 @@
 							passwordConfirm: [
 								v => !!v || 'Password Wajib diisi',
                                 v => v == this.passwordAfter || 'Password Konfirmasi Harus Sama Dengan Password Baru',
-							]
+							],
+                            file: [
+                                v => !!v || 'File is required',
+                            ],
                         },
 					}
 				},
 
 				methods: {
+                    uploadJadwal() {
+                        if(this.$refs.form.validate()) {
+                            return new Promise( (resolve, reject) => {
+                                const data  = new FormData()
+                                data.append('id',<?=$id?>)
+                                data.append('file',this.jadwalFile)
+                                axios.post('<?= base_url()?>api/Dosen_Jadwal',data,{headers: {'Content-Type': 'multipart/form-data'}})
+                                    .then((response) => {
+                                        resolve(response.data)
+                                    }) .catch((err) => {
+                                        if(err.response.status == 500) reject(err.response.data)
+                                    })
+                            } )
+                            .then((response) => {
+                                this.snackbarMessage = response.message
+                                this.snackbarColor = 'success'
+                            }) .catch(err => {
+                                this.snackbarMessage = err
+                                this.snackbarColor = 'error'
+                            }) .finally(() => {
+                                this.snackbar = true
+                                this.get()
+                                this.close()
+                            })
+                        }
+                    },
                     dayFormat(date) {
 						let i = new Date(date).getDay(date)
 						var dayOftheWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
@@ -458,6 +519,11 @@
                                 this.changePasswordOpenDialog = false
                                 this.passwordAfter = ''
                                 this.passwordAfterConfirmation = ''
+                            } else {
+                                if(this.changeJadwalDialog) {
+                                    this.changeJadwalDialog = false
+                                    this.jadwalFile = null
+                                }
                             }
                         }
                     },
@@ -702,6 +768,9 @@
                     },
                     changePasswordOpenDialogFunc() {
                         this.changePasswordOpenDialog = true
+                    },
+                    changeJadwal() {
+                        this.changeJadwalDialog = true
                     },
                     changePassword() {
                         if(this.$refs.formPassword.validate()) {

@@ -77,6 +77,9 @@
 												<v-col cols="12">
 													<v-text-field class="mb-n4" color="blue" label="Nama" v-model="user.nama" :rules="rules.nama"/>
 												</v-col>
+												<v-col cols="12">
+													<v-text-field class="mb-n4" color="blue" label="Email" v-model="user.email" :rules="rules.email"/>
+												</v-col>
 											</v-row>
 										</v-card-text>
 									</v-form>
@@ -503,6 +506,10 @@
 							nama: [
 								v => !!v || 'Nama Wajib diisi',
 							],
+							email: [
+								v => !!v || 'E-mail is required',
+        						v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+							],
 							passwordAfter: [
 								v => !!v || 'Password Wajib diisi',
                                 v => v == this.passwordAfter || 'Password Konfirmasi Harus Sama Dengan Password Baru',
@@ -747,6 +754,7 @@
 					},
 					updateMahasiswa() {
 						return new Promise((resolve, reject) => {
+							this.mahasiswa.password = null
 							axios.put('<?= base_url()?>api/User',this.mahasiswa)
 								.then(response => {
 									resolve(response.data)

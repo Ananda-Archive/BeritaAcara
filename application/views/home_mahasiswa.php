@@ -44,6 +44,7 @@
                                                             :clearable="logoOne.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
+                                                                <v-icon v-if="berkass[0].toefl_file == null || berkass[0].toefl_file_verified == 0" small class="red--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadOne" :color="logoOne.color">{{logoOne.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -63,6 +64,7 @@
                                                             :clearable="logoTwo.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
+                                                                <v-icon v-if="berkass[0].skripsi_file == null || berkass[0].skripsi_file_verified_dosen_pembimbing == 0 || berkass[0].skripsi_file_verified_ketua_penguji == 0 || berkass[0].skripsi_file_verified_dosen_penguji == 0" small class="red--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadTwo" :color="logoTwo.color">{{logoTwo.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -82,6 +84,7 @@
                                                             :clearable="logoThree.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
+                                                                <v-icon v-if="berkass[0].bimbingan_file == null || berkass[0].bimbingan_file_verified == 0" small class="red--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadThree" :color="logoThree.color">{{logoThree.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -101,6 +104,7 @@
                                                             :clearable="logoFour.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
+                                                                <v-icon v-if="berkass[0].transkrip_file == null || berkass[0].transkrip_file_verified == 0" small class="red--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadFour" :color="logoFour.color">{{logoFour.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -108,12 +112,21 @@
                                                 </v-col>
                                             </v-card-text>
                                             <v-divider class="mt-n8"></v-divider>
-                                            <v-card-actions>
+                                            <v-card-actions v-if="!popUpBreakPoint">
                                                 <v-container>
                                                     <v-row justify="center">
-                                                        <v-btn :disabled="berkass[0].skripsi_file_revisi_dosen_pembimbing == null" class="mr-4" color="blue white--text" @click="getBerkasDosenPembimbing">Revisi Dosen Pembimbing</v-btn>
-                                                        <v-btn :disabled="berkass[0].skripsi_file_revisi_ketua_penguji == null" class="mr-4" color="blue white--text" @click="getBerkasKetuaPenguji">Revisi Ketua Penguji</v-btn>
-                                                        <v-btn :disabled="berkass[0].skripsi_file_revisi_dosen_penguji == null" color="blue white--text" @click="getBerkasDosenPenguji">Revisi Dosen Penguji</v-btn>
+                                                        <v-btn width="30%" :disabled="berkass[0].skripsi_file_revisi_dosen_pembimbing == null" class="mr-4" color="blue white--text" @click="getBerkasDosenPembimbing">Revisi Dosen Pembimbing</v-btn>
+                                                        <v-btn width="30%" :disabled="berkass[0].skripsi_file_revisi_ketua_penguji == null" class="mr-4" color="blue white--text" @click="getBerkasKetuaPenguji">Revisi Ketua Penguji</v-btn>
+                                                        <v-btn width="30%" :disabled="berkass[0].skripsi_file_revisi_dosen_penguji == null" color="blue white--text" @click="getBerkasDosenPenguji">Revisi Dosen Penguji</v-btn>
+                                                    </v-row>
+                                                </v-container>
+                                            </v-card-actions>
+                                            <v-card-actions v-else>
+                                                <v-container>
+                                                    <v-row justify="center">
+                                                        <v-btn width="90%" :disabled="berkass[0].skripsi_file_revisi_dosen_pembimbing == null" class="mb-4" color="blue white--text" @click="getBerkasDosenPembimbing">Revisi Dosen Pembimbing</v-btn>
+                                                        <v-btn width="90%" :disabled="berkass[0].skripsi_file_revisi_ketua_penguji == null" class="mb-4" color="blue white--text" @click="getBerkasKetuaPenguji">Revisi Ketua Penguji</v-btn>
+                                                        <v-btn width="90%" :disabled="berkass[0].skripsi_file_revisi_dosen_penguji == null" color="blue white--text" @click="getBerkasDosenPenguji">Revisi Dosen Penguji</v-btn>
                                                     </v-row>
                                                 </v-container>
                                             </v-card-actions>
@@ -273,6 +286,152 @@
                                         </v-card-actions>
                                     </v-card>
                                 </v-dialog>
+                                <!-- Upload Undangan -->
+                                <v-col cols='12' sm='12' md='3'>
+                                    <v-card @click="uploadBimbinganDialog = !uploadBimbinganDialog" class="elevation-12 align-center" color="blue" min-height="230" max-height="230">
+                                        <div class="d-flex flex-no-wrap justify-space-between">
+											<div>
+												<v-card-title class="font-weight-light">UPLOAD UNDANGAN</v-card-title>
+											</div>
+											<div>
+												<v-card-title class="font-weight-light"><v-icon>mdi-file-check</v-icon></v-card-title>
+											</div>
+										</div>
+										<v-card-title class="justify-center"><v-icon class="display-4">mdi-file-account</v-icon></v-card-title>
+                                    </v-card>
+                                </v-col>
+                                <v-dialog persistent v-model="uploadBimbinganDialog" max-width="900px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Upload Undangan</span>
+                                            <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-card-text>
+                                            <v-col cols='12'>
+                                                <v-form ref='form'>
+                                                    <v-file-input
+                                                        v-model="undanganFile"
+                                                        color="blue"
+                                                        label="Surat Undangan"
+                                                        placeholder="Select your file"
+                                                        prepend-icon=""
+                                                        outlined
+                                                        :rules="rules.file"
+                                                        accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf"
+                                                        class="mt-4"
+                                                    >
+                                                </v-form>
+                                                <v-card-actions>
+                                                        <v-row justify="center">
+                                                            <v-btn class="my-n4" color="red darken-1" text @click="close">Cancel</v-btn>
+                                                            <v-btn class="my-n4" color="green white--text" @click="uploadUndangan">Upload</v-btn>
+                                                        </v-row>
+                                                </v-card-actions>
+                                            </v-col>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
+                                <!-- DETAIL -->
+                                <v-col cols='12' sm='12' md='3'>
+                                    <v-card @click="detailDialog = !detailDialog" class="elevation-12 align-center" color="blue" min-height="230" max-height="230">
+                                        <div class="d-flex flex-no-wrap justify-space-between">
+											<div>
+												<v-card-title class="font-weight-light">DETAIL</v-card-title>
+											</div>
+											<div>
+												<v-card-title class="font-weight-light"><v-icon>mdi-account-circle</v-icon></v-card-title>
+											</div>
+										</div>
+										<v-card-title class="justify-center"><v-icon class="display-4">mdi-account-details</v-icon></v-card-title>
+                                    </v-card>
+                                </v-col>
+                                <v-dialog persistent v-model="detailDialog" max-width="900px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Details</span>
+                                            <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-card-text class='mt-4'>
+                                            <v-simple-table>
+                                                <template v-slot:default>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="font-weight-bold">NIM</td>
+                                                            <td>{{self.nomor}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold">NAMA</td>
+                                                            <td>{{self.nama}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold">JUDUL SKRIPSI</td>
+                                                            <td>{{self.judul}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold">DOSEN PEMBIMBING</td>
+                                                            <td>
+                                                                <v-row>
+                                                                    <v-col cols='11'>
+                                                                        {{self.nama_dosen_pembimbing}}
+                                                                    </v-col>
+                                                                    <v-spacer></v-spacer>
+                                                                    <v-col cols='1'>
+                                                                        <v-tooltip bottom>
+                                                                            <template v-slot:activator="{ on }">
+                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_dosen_pembimbing == null" @click="getJadwalPembimbing">mdi-calendar-clock</v-icon>
+                                                                            </template>
+                                                                            <span>Download Jadwal</span>
+                                                                        </v-tooltip>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold">KETUA PENGUJI</td>
+                                                            <td v-if="self.id_ketua_penguji != null">
+                                                                <v-row>
+                                                                    <v-col cols='11'>
+                                                                        {{self.nama_ketua_penguji}}
+                                                                    </v-col>
+                                                                    <v-spacer></v-spacer>
+                                                                    <v-col cols='1'>
+                                                                        <v-tooltip bottom>
+                                                                            <template v-slot:activator="{ on }">
+                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_ketua_penguji == null" @click="getJadwalKetua">mdi-calendar-clock</v-icon>
+                                                                            </template>
+                                                                            <span>Download Jadwal</span>
+                                                                        </v-tooltip>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </td>
+                                                            <td v-else>-</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold">DOSEN PENGUJI 1</td>
+                                                            <td v-if="self.id_dosen_penguji != null">
+                                                                <v-row>
+                                                                    <v-col cols='11'>
+                                                                        {{self.nama_dosen_penguji}}
+                                                                    </v-col>
+                                                                    <v-spacer></v-spacer>
+                                                                    <v-col cols='1'>
+                                                                        <v-tooltip bottom>
+                                                                            <template v-slot:activator="{ on }">
+                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_dosen_penguji == null" @click="getJadwalPenguji">mdi-calendar-clock</v-icon>
+                                                                            </template>
+                                                                            <span>Download Jadwal</span>
+                                                                        </v-tooltip>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </td>
+                                                            <td v-else>-</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </template>
+                                            </v-simple-table>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
                             </v-row>
                         </v-container>
                     </v-layout>
@@ -316,6 +475,8 @@
                         showDatePicker:false,
                         showTimePicker:false,
                         changePasswordOpenDialog: false,
+                        detailDialog: false,
+                        uploadBimbinganDialog: false,
                         // Data preparation for JSON
                         uploadBerkas: {
                             toefl:null,
@@ -336,6 +497,7 @@
                         },
                         passwordAfter:'',
                         passwordAfterConfirmation:'',
+                        undanganFile: null,
                         // Snackbar goes here
                         snackbar: false,
                         snackbarMessage: '',
@@ -597,6 +759,34 @@
                             })
                         }
                     },
+                    uploadUndangan() {
+                        if(this.$refs.form.validate()) {
+                            return new Promise( (resolve, reject) => {
+                                const data  = new FormData()
+                                data.append('id_dosen_pembimbing',this.self.id_dosen_pembimbing)
+                                data.append('id_ketua_penguji',this.self.id_ketua_penguji)
+                                data.append('id_dosen_penguji',this.self.id_dosen_penguji)
+                                data.append('file',this.undanganFile)
+                                axios.post('<?= base_url()?>api/Post_Undangan',data,{headers: {'Content-Type': 'multipart/form-data'}})
+                                    .then((response) => {
+                                        resolve(response.data)
+                                    }) .catch((err) => {
+                                        if(err.response.status == 500) reject(err.response.data)
+                                    })
+                            } )
+                            .then((response) => {
+                                this.snackbarMessage = response.message
+                                this.snackbarColor = 'success'
+                            }) .catch(err => {
+                                this.snackbarMessage = err
+                                this.snackbarColor = 'error'
+                            }) .finally(() => {
+                                this.snackbar = true
+                                this.get()
+                                this.close()
+                            })
+                        }
+                    },
                     logOut() {
                         window.location.href = '<?=base_url('Pages/logOut');?>'
                     },
@@ -611,6 +801,15 @@
                                     this.changePasswordOpenDialog = false
                                     this.passwordAfter = ''
                                     this.passwordAfterConfirmation = ''
+                                } else {
+                                    if(this.detailDialog) {
+                                        this.detailDialog = false
+                                    } else {
+                                        if(this.uploadBimbinganDialog) {
+                                            this.undanganFile = null
+                                            this.uploadBimbinganDialog = false
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -644,7 +843,16 @@
                                 this.close()
                             })
                         }
-                    }
+                    },
+                    getJadwalPembimbing() {
+                        window.open(this.self.jadwal_dosen_pembimbing, '_blank');
+                    },
+                    getJadwalKetua() {
+                        window.open(this.self.jadwal_ketua_penguji, '_blank');
+                    },
+                    getJadwalPenguji() {
+                        window.open(this.self.jadwal_dosen_penguji, '_blank');
+                    },
 				},
 				
 				computed: {

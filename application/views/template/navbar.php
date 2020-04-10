@@ -20,6 +20,10 @@
                         <v-list-item-icon  class="mr-2"><v-icon>mdi-account-key</v-icon></v-list-item-icon>
                         <v-list-item-content><v-list-item-title>Ganti Password</v-list-item-title></v-list-item-content>
                     </v-list-item>
+                    <v-list-item v-if="<?=$role?> == 1" @click="changeJadwal">
+                        <v-list-item-icon  class="mr-2"><v-icon>mdi-calendar-clock</v-icon></v-list-item-icon>
+                        <v-list-item-content><v-list-item-title>Ganti Jadwal</v-list-item-title></v-list-item-content>
+                    </v-list-item>
                     <v-list-item @click="logOut">
                         <v-list-item-icon class="mr-2"><v-icon color="red">mdi-power</v-icon></v-list-item-icon>
                         <v-list-item-content><v-list-item-title class="red--text">Keluar</v-list-item-title></v-list-item-content>

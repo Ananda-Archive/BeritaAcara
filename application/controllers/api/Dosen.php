@@ -22,6 +22,7 @@ class Dosen extends REST_Controller {
     public function index_post() {
         $nomor = $this->post('nomor');
         $nama = $this->post('nama');
+        $email = $this->post('email');
         $password = hash('sha512',$this->post('nomor') . config_item('encryption_key'));
         if(!isset($nomor)) {
             $this->response(
@@ -41,8 +42,17 @@ class Dosen extends REST_Controller {
             );
             return;
         }
+        if(!isset($email)) {
+            $this->response(
+                array(
+                    'status' => FALSE,
+                    'message' => $this::REQUIRED_PARAMETER_MESSAGE."email"
+                ), REST_Controller::HTTP_BAD_REQUEST
+            );
+            return;
+        }
         if($this->M_Dosen->get_by_nomor($nomor)->num_rows() == 0) {
-            if($this->M_Dosen->insert($nomor,$nama,$password)) {
+            if($this->M_Dosen->insert($nomor,$nama,$email,$password)) {
                 $this->response(
                     array(
                         'status' => TRUE,
@@ -110,6 +120,9 @@ class Dosen extends REST_Controller {
         if(isset($password)){
             $password = hash('sha512', $password . config_item('encryption_key'));
             $datas = array_merge($datas, array('password' => $password));
+        }
+        if(isset($email)){
+            $datas = array_merge($datas, array('email' => $email));
         }
         if($this->M_Dosen->update($id,$datas)) {
             $this->response(

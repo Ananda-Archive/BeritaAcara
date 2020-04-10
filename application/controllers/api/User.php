@@ -25,6 +25,19 @@ class User extends REST_Controller {
         $verif = $this->get('verif');
         if(isset($id)) {
             $result = $this->M_User->get_user_where($id);
+            $dosen_pembimbing = $this->M_Dosen->get_name($result[0]['id_dosen_pembimbing']);
+            $result = array_merge($result[0],array('nama_dosen_pembimbing' => $dosen_pembimbing[0]['nama']), array('jadwal_dosen_pembimbing' => $dosen_pembimbing[0]['file_jadwal']));
+            if($result['id_ketua_penguji'] != null) {
+                $ketua_penguji = $this->M_Dosen->get_name($result['id_ketua_penguji']);
+                $result = array_merge($result,array('nama_ketua_penguji' => $ketua_penguji[0]['nama']), array('jadwal_ketua_penguji' => $ketua_penguji[0]['file_jadwal']));
+            }
+            if($result['id_dosen_penguji'] != null) {
+                $dosen_penguji = $this->M_Dosen->get_name($result['id_dosen_penguji']);
+                $result = array_merge($result,array('nama_dosen_penguji' => $dosen_penguji[0]['nama']), array('jadwal_dosen_penguji' => $dosen_penguji[0]['file_jadwal']));
+            }
+            if($undangan = $this->M_Undangan->get_by_id_mahasiswa($id)) {
+                $result = array_merge($result,array('undangan' => $undangan));
+            }
             $this->response($result,REST_Controller::HTTP_OK);
         } else {
             if(isset($verif)) {
