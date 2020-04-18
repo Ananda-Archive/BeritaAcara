@@ -25,15 +25,30 @@ class User extends REST_Controller {
         $verif = $this->get('verif');
         if(isset($id)) {
             $result = $this->M_User->get_user_where($id);
-            $dosen_pembimbing = $this->M_Dosen->get_name($result[0]['id_dosen_pembimbing']);
-            $result = array_merge($result[0],array('nama_dosen_pembimbing' => $dosen_pembimbing[0]['nama']), array('jadwal_dosen_pembimbing' => $dosen_pembimbing[0]['file_jadwal']));
+            $nama_dosen_pembimbing = $this->M_Dosen->get_name($result[0]['id_dosen_pembimbing']);
+            $dosen_pembimbing = array();
+            for($i=1; $i<=5; $i++) {
+                $time = $this->M_Schedules->get_gorup_days($i,$result[0]['id_dosen_pembimbing']);
+                $dosen_pembimbing = array_merge($dosen_pembimbing, array($time));
+            };
+            $result = array_merge($result[0],array('nama_dosen_pembimbing' => $nama_dosen_pembimbing[0]['nama']), array('jadwal_dosen_pembimbing' => $dosen_pembimbing));
             if($result['id_ketua_penguji'] != null) {
-                $ketua_penguji = $this->M_Dosen->get_name($result['id_ketua_penguji']);
-                $result = array_merge($result,array('nama_ketua_penguji' => $ketua_penguji[0]['nama']), array('jadwal_ketua_penguji' => $ketua_penguji[0]['file_jadwal']));
+                $nama_ketua_penguji = $this->M_Dosen->get_name($result['id_ketua_penguji']);
+                $ketua_penguji = array();
+                for($i=1; $i<=5; $i++) {
+                    $time = $this->M_Schedules->get_gorup_days($i,$result['id_ketua_penguji']);
+                    $ketua_penguji = array_merge($ketua_penguji, array($time));
+                };
+                $result = array_merge($result,array('nama_ketua_penguji' => $nama_ketua_penguji[0]['nama']), array('jadwal_ketua_penguji' => $ketua_penguji));
             }
             if($result['id_dosen_penguji'] != null) {
-                $dosen_penguji = $this->M_Dosen->get_name($result['id_dosen_penguji']);
-                $result = array_merge($result,array('nama_dosen_penguji' => $dosen_penguji[0]['nama']), array('jadwal_dosen_penguji' => $dosen_penguji[0]['file_jadwal']));
+                $nama_dosen_penguji = $this->M_Dosen->get_name($result['id_dosen_penguji']);
+                $dosen_penguji = array();
+                for($i=1; $i<=5; $i++) {
+                    $time = $this->M_Schedules->get_gorup_days($i,$result['id_dosen_penguji']);
+                    $dosen_penguji = array_merge($dosen_penguji, array($time));
+                };
+                $result = array_merge($result,array('nama_dosen_penguji' => $nama_dosen_penguji[0]['nama']), array('jadwal_dosen_penguji' => $dosen_penguji));
             }
             if($undangan = $this->M_Undangan->get_by_id_mahasiswa($id)) {
                 $result = array_merge($result,array('undangan' => $undangan));

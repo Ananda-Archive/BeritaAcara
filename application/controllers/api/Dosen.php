@@ -52,14 +52,24 @@ class Dosen extends REST_Controller {
             return;
         }
         if($this->M_Dosen->get_by_nomor($nomor)->num_rows() == 0) {
-            if($this->M_Dosen->insert($nomor,$nama,$email,$password)) {
-                $this->response(
-                    array(
-                        'status' => TRUE,
-                        'message' => $this::INSERT_SUCCESS_MESSSAGE
-                    ),
-                    REST_Controller::HTTP_CREATED
-                );
+            if($id_dosen = $this->M_Dosen->insert($nomor,$nama,$email,$password)) {
+                if($this->M_Schedules->insert($id_dosen)) {
+                    $this->response(
+                        array(
+                            'status' => TRUE,
+                            'message' => $this::INSERT_SUCCESS_MESSSAGE
+                        ),
+                        REST_Controller::HTTP_CREATED
+                    );
+                } else {
+                    $this->response(
+                        array(
+                            'status' => FALSE,
+                            'message' => $this::INSERT_FAILED_MESSAGE
+                        ),
+                        REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                    );
+                }
             } else {
                 $this->response(
                     array(

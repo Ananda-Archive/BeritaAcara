@@ -723,7 +723,7 @@
 								this.snackbar = true
 								this.get()
 								this.user = Object.assign({},this.userDefault)
-								this.close()
+								// this.close()
 							})
 						}
 					},

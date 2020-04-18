@@ -44,7 +44,8 @@
                                                             :clearable="logoOne.logo == uploadLogo.before"
                                                         >
                                                             <template v-slot:append>
-                                                                <v-icon v-if="berkass[0].toefl_file == null || berkass[0].toefl_file_verified == 0" small class="red--text mr-2">mdi-record</v-icon>
+                                                            <v-icon v-if="berkass[0].toefl_file == null || berkass[0].toefl_file_verified == 0" small class="red--text mr-2">mdi-record</v-icon>
+                                                            <v-icon v-else small class="green--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadOne" :color="logoOne.color">{{logoOne.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -65,6 +66,7 @@
                                                         >
                                                             <template v-slot:append>
                                                                 <v-icon v-if="berkass[0].skripsi_file == null || berkass[0].skripsi_file_verified_dosen_pembimbing == 0 || berkass[0].skripsi_file_verified_ketua_penguji == 0 || berkass[0].skripsi_file_verified_dosen_penguji == 0" small class="red--text mr-2">mdi-record</v-icon>
+                                                                <v-icon v-else small class="green--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadTwo" :color="logoTwo.color">{{logoTwo.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -85,6 +87,7 @@
                                                         >
                                                             <template v-slot:append>
                                                                 <v-icon v-if="berkass[0].bimbingan_file == null || berkass[0].bimbingan_file_verified == 0" small class="red--text mr-2">mdi-record</v-icon>
+                                                                <v-icon v-else small class="green--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadThree" :color="logoThree.color">{{logoThree.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -105,6 +108,7 @@
                                                         >
                                                             <template v-slot:append>
                                                                 <v-icon v-if="berkass[0].transkrip_file == null || berkass[0].transkrip_file_verified == 0" small class="red--text mr-2">mdi-record</v-icon>
+                                                                <v-icon v-else small class="green--text mr-2">mdi-record</v-icon>
                                                                 <v-icon @click="uploadFour" :color="logoFour.color">{{logoFour.logo}}</v-icon>
                                                             </template>
                                                         </v-file-input>
@@ -135,7 +139,7 @@
                                 </v-col>
                                 <!-- UPLOAD BERITA ACARA -->
                                 <v-col cols='12' sm='12' md='3'>
-                                    <v-card @click="uploadBeritaAcaraDialog = !uploadBeritaAcaraDialog" class="elevation-12 align-center" color="blue" min-height="230" max-height="230">
+                                    <v-card :disabled="self.id_ketua_penguji == null || self.id_dosen_penguji == null" @click="uploadBeritaAcaraDialog = !uploadBeritaAcaraDialog" class="elevation-12 align-center" :color="decideColor" min-height="230" max-height="230">
                                         <div class="d-flex flex-no-wrap justify-space-between">
 											<div>
 												<v-card-title class="font-weight-light">UPLOAD BERITA ACARA</v-card-title>
@@ -288,7 +292,7 @@
                                 </v-dialog>
                                 <!-- Upload Undangan -->
                                 <v-col cols='12' sm='12' md='3'>
-                                    <v-card @click="uploadBimbinganDialog = !uploadBimbinganDialog" class="elevation-12 align-center" color="blue" min-height="230" max-height="230">
+                                    <v-card :disabled="self.id_ketua_penguji == null || self.id_dosen_penguji == null" @click="uploadBimbinganDialog = !uploadBimbinganDialog" class="elevation-12 align-center" :color="decideColor" min-height="230" max-height="230">
                                         <div class="d-flex flex-no-wrap justify-space-between">
 											<div>
 												<v-card-title class="font-weight-light">UPLOAD UNDANGAN</v-card-title>
@@ -378,9 +382,9 @@
                                                                     <v-col cols='1'>
                                                                         <v-tooltip bottom>
                                                                             <template v-slot:activator="{ on }">
-                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_dosen_pembimbing == null" @click="getJadwalPembimbing">mdi-calendar-clock</v-icon>
+                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_dosen_pembimbing == null" @click="detailJadwalDialog = true">mdi-calendar-clock</v-icon>
                                                                             </template>
-                                                                            <span>Download Jadwal</span>
+                                                                            <span>Lihat Jadwal</span>
                                                                         </v-tooltip>
                                                                     </v-col>
                                                                 </v-row>
@@ -397,9 +401,9 @@
                                                                     <v-col cols='1'>
                                                                         <v-tooltip bottom>
                                                                             <template v-slot:activator="{ on }">
-                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_ketua_penguji == null" @click="getJadwalKetua">mdi-calendar-clock</v-icon>
+                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_ketua_penguji == null" @click="detailJadwalDialogKetuaPenguji = true">mdi-calendar-clock</v-icon>
                                                                             </template>
-                                                                            <span>Download Jadwal</span>
+                                                                            <span>Lihat Jadwal</span>
                                                                         </v-tooltip>
                                                                     </v-col>
                                                                 </v-row>
@@ -417,9 +421,9 @@
                                                                     <v-col cols='1'>
                                                                         <v-tooltip bottom>
                                                                             <template v-slot:activator="{ on }">
-                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_dosen_penguji == null" @click="getJadwalPenguji">mdi-calendar-clock</v-icon>
+                                                                                <v-icon color="blue" v-on="on" :disabled="self.jadwal_dosen_penguji == null" @click="detailJadwalDialogDosenPenguji = true">mdi-calendar-clock</v-icon>
                                                                             </template>
-                                                                            <span>Download Jadwal</span>
+                                                                            <span>Lihat Jadwal</span>
                                                                         </v-tooltip>
                                                                     </v-col>
                                                                 </v-row>
@@ -429,6 +433,81 @@
                                                     </tbody>
                                                 </template>
                                             </v-simple-table>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
+                                <v-dialog v-model="detailJadwalDialog" persistent max-width="700px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Jadwal</span>
+                                            <v-btn absolute right icon @click="detailJadwalDialog = false"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-card-text class='pt-2'>
+                                            <div v-for="(day,index) in days" :key="index">
+                                                <v-col cols="12"><header class="body-1">{{day.day}}</header></v-col>
+                                                <v-row class="px-4 mb-5 mt-n2">
+                                                    <v-col class="my-n4" lg="4" md="6" sm="6" v-for="(time,idx) in times" :key="idx" v-if="schedules[index][idx].availability == 1">
+                                                        <v-checkbox
+                                                            v-model="schedules[index][idx].availability"
+                                                            false-value="0"
+                                                            true-value="1"
+                                                            :label="times[idx].time"
+                                                            style="pointer-events: none"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-divider v-if="index !=4"></v-divider>
+                                            </div>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
+                                <v-dialog v-model="detailJadwalDialogKetuaPenguji" v-if="self.id_ketua_penguji != null" persistent max-width="700px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Jadwal</span>
+                                            <v-btn absolute right icon @click="detailJadwalDialogKetuaPenguji = false"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-card-text class='pt-2'>
+                                            <div v-for="(day,index) in days" :key="index">
+                                                <v-col cols="12"><header class="body-1">{{day.day}}</header></v-col>
+                                                <v-row class="px-4 mb-5 mt-n2">
+                                                    <v-col class="my-n4" lg="4" md="6" sm="6" v-for="(time,idx) in times" :key="idx" v-if="schedulesKetuaPenguji[index][idx].availability == 1">
+                                                        <v-checkbox
+                                                            v-model="schedulesKetuaPenguji[index][idx].availability"
+                                                            false-value="0"
+                                                            true-value="1"
+                                                            :label="times[idx].time"
+                                                            style="pointer-events: none"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-divider v-if="index !=4"></v-divider>
+                                            </div>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
+                                <v-dialog v-model="detailJadwalDialogDosenPenguji" v-if="self.id_dosen_penguji != null" persistent max-width="700px">
+                                    <v-card>
+                                        <v-toolbar dense flat color="blue">
+                                            <span class="title font-weight-light">Jadwal</span>
+                                            <v-btn absolute right icon @click="detailJadwalDialogDosenPenguji = false"><v-icon>mdi-close</v-icon></v-btn>
+                                        </v-toolbar>
+                                        <v-card-text class='pt-2'>
+                                            <div v-for="(day,index) in days" :key="index">
+                                                <v-col cols="12"><header class="body-1">{{day.day}}</header></v-col>
+                                                <v-row class="px-4 mb-5 mt-n2">
+                                                    <v-col class="my-n4" lg="4" md="6" sm="6" v-for="(time,idx) in times" :key="idx" v-if="schedulesDosenPenguji[index][idx].availability == 1">
+                                                        <v-checkbox
+                                                            v-model="schedulesDosenPenguji[index][idx].availability"
+                                                            false-value="0"
+                                                            true-value="1"
+                                                            :label="times[idx].time"
+                                                            style="pointer-events: none"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-divider v-if="index !=4"></v-divider>
+                                            </div>
                                         </v-card-text>
                                     </v-card>
                                 </v-dialog>
@@ -477,7 +556,13 @@
                         changePasswordOpenDialog: false,
                         detailDialog: false,
                         uploadBimbinganDialog: false,
+                        detailJadwalDialog: false,
+                        detailJadwalDialogKetuaPenguji: false,
+                        detailJadwalDialogDosenPenguji: false,
                         // Data preparation for JSON
+                        schedules:[],
+                        schedulesKetuaPenguji: [],
+                        schedulesDosenPenguji: [],
                         uploadBerkas: {
                             toefl:null,
                             transkrip:null,
@@ -524,6 +609,22 @@
 							]
                         },
                         // etc
+                        days: [
+                            {id:1, day:'Senin'},
+                            {id:2, day:'Selasa'},
+                            {id:3, day:'Rabu'},
+                            {id:4, day:'Kamis'},
+                            {id:5, day:'Jumat'}
+                        ],
+                        times: [
+                            {id:1, time:'08:00 - 09:00'},
+                            {id:2, time:'09:00 - 10:00'},
+                            {id:3, time:'10:00 - 11:00'},
+                            {id:4, time:'11:00 - 12:00'},
+                            {id:5, time:'13:00 - 14:00'},
+                            {id:6, time:'14:00 - 15:00'},
+                            {id:7, time:'15:00 - 16:00'}
+                        ],
                         uploadLogo: {
                             before:'mdi-upload',
                             in:'mdi-loading mdi-spin',
@@ -577,9 +678,12 @@
                             })
                             .then((response) => {
                                 this.self = response
-                                this.uploadBeritaAcara.id_dosen_pembimbing = response[0].id_dosen_pembimbing
-                                this.uploadBeritaAcara.id_ketua_penguji = response[0].id_ketua_penguji
-                                this.uploadBeritaAcara.id_dosen_penguji = response[0].id_dosen_penguji
+                                this.schedules = response.jadwal_dosen_pembimbing
+                                this.schedulesKetuaPenguji = response.jadwal_ketua_penguji
+                                this.schedulesDosenPenguji = response.jadwal_dosen_penguji
+                                this.uploadBeritaAcara.id_dosen_pembimbing = response.id_dosen_pembimbing
+                                this.uploadBeritaAcara.id_ketua_penguji = response.id_ketua_penguji
+                                this.uploadBeritaAcara.id_dosen_penguji = response.id_dosen_penguji
                             })
                         })
                     },
@@ -735,9 +839,9 @@
                                 data.append('file',this.uploadBeritaAcara.file)
                                 data.append('date',this.uploadBeritaAcara.date)
                                 data.append('time',this.uploadBeritaAcara.time)
-                                data.append('id_dosen_pembimbing',this.uploadBeritaAcara.id_dosen_pembimbing)
-                                data.append('id_ketua_penguji',this.uploadBeritaAcara.id_ketua_penguji)
-                                data.append('id_dosen_penguji',this.uploadBeritaAcara.id_dosen_penguji)
+                                data.append('id_dosen_pembimbing',this.self.id_dosen_pembimbing)
+                                data.append('id_ketua_penguji',this.self.id_ketua_penguji)
+                                data.append('id_dosen_penguji',this.self.id_dosen_penguji)
                                 data.append('max_revisi',moment(this.uploadBeritaAcara.date).add('days', 14).format('YYYY-MM-DD'))
                                 axios.post('<?= base_url()?>api/Berita_Acara',data,{headers: {'Content-Type': 'multipart/form-data'}})
                                     .then((response) => {
@@ -844,18 +948,17 @@
                             })
                         }
                     },
-                    getJadwalPembimbing() {
-                        window.open(this.self.jadwal_dosen_pembimbing, '_blank');
-                    },
-                    getJadwalKetua() {
-                        window.open(this.self.jadwal_ketua_penguji, '_blank');
-                    },
-                    getJadwalPenguji() {
-                        window.open(this.self.jadwal_dosen_penguji, '_blank');
-                    },
 				},
 				
 				computed: {
+                    
+                    decideColor() {
+                        if(this.self.id_ketua_penguji == null || this.self.id_dosen_penguji == null) {
+                            return 'grey darken-2'
+                        } else {
+                            return 'blue'
+                        }
+                    },
                     disabledOne() {
                         if(this.berkass.length != 0) {
                             if(this.berkass[0].toefl_file != null){

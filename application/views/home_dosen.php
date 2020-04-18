@@ -179,7 +179,8 @@
                                                                 ></v-text-field>
                                                             </td>
                                                         </tr>
-                                                        <tr v-if="beritaAcara.id_ketua_penguji == id && beritaAcara.status != 'Lulus' && beritaAcara.status != null">
+                                                        <tr v-if="beritaAcara.id_ketua_penguji">
+                                                        <!-- <tr v-if="beritaAcara.id_ketua_penguji == id && beritaAcara.status != 'Lulus' && beritaAcara.status != null"> -->
                                                             <td class="font-weight-bold">NILAI FINAL</td>
                                                             <td class="px-n4">
                                                                 <v-text-field
@@ -248,9 +249,10 @@
                                                                     accept="application/pdf"
                                                                     class="mb-n6 mt-1"
                                                                     dense
+                                                                    :disabled="beritaAcara.status == null && beritaAcara.id_ketua_penguji != id"
                                                                 >
                                                                 <template v-slot:prepend-inner>
-                                                                    <v-icon>mdi-paperclip</v-icon>
+                                                                    <v-icon :disabled="beritaAcara.status == null && beritaAcara.id_ketua_penguji != id">mdi-paperclip</v-icon>
                                                                 </template>
                                                             </td>
                                                         </tr>
@@ -329,30 +331,25 @@
                                 <v-dialog v-model="changeJadwalDialog" persistent max-width="700px">
                                     <v-card>
                                         <v-toolbar dense flat color="blue">
-                                            <span class="title font-weight-light">Ganti Password</span>
+                                            <span class="title font-weight-light">Jadwal</span>
                                             <v-btn absolute right icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
                                         </v-toolbar>
-                                        <v-card-text>
-                                            <v-col cols='12'>
-                                                <v-form ref='form'>
-                                                    <v-file-input
-                                                        v-model="jadwalFile"
-                                                        color="blue"
-                                                        label="Jadwal"
-                                                        placeholder="Select your file"
-                                                        prepend-icon=""
-                                                        outlined
-                                                        :rules="rules.file"
-                                                        accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf"
-                                                        class="mt-4"
-                                                    >
-                                                </v-form>
-                                                <v-card-actions>
-                                                        <v-row justify="center">
-                                                            <v-btn class="my-n4" color="green white--text" @click="uploadJadwal">Upload</v-btn>
-                                                        </v-row>
-                                                </v-card-actions>
-                                            </v-col>
+                                        <v-card-text class='pt-2'>
+                                            <div v-for="(day,index) in days" :key="index">
+                                                <v-col cols="12"><header class="body-1">{{day.day}}</header></v-col>
+                                                <v-row class="px-4 mb-5 mt-n2">
+                                                    <v-col class="my-n4" lg="4" md="6" sm="6" v-for="(time,idx) in times" :key="idx">
+                                                        <v-checkbox
+                                                            v-model="schedules[index][idx].availability"
+                                                            false-value="0"
+                                                            true-value="1"
+                                                            :label="times[idx].time"
+                                                            @change="changeSchedule(schedules[index][idx])"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-divider v-if="index !=4"></v-divider>
+                                            </div>
                                         </v-card-text>
                                     </v-card>
                                 </v-dialog>
@@ -409,6 +406,24 @@
                         passwordAfter:'',
                         passwordAfterConfirmation:'',
                         jadwalFile:null,
+                        schedules:[],
+                        schedules_sent:[],
+                        days: [
+                            {id:1, day:'Senin'},
+                            {id:2, day:'Selasa'},
+                            {id:3, day:'Rabu'},
+                            {id:4, day:'Kamis'},
+                            {id:5, day:'Jumat'}
+                        ],
+                        times: [
+                            {id:1, time:'08:00 - 09:00'},
+                            {id:2, time:'09:00 - 10:00'},
+                            {id:3, time:'10:00 - 11:00'},
+                            {id:4, time:'11:00 - 12:00'},
+                            {id:5, time:'13:00 - 14:00'},
+                            {id:6, time:'14:00 - 15:00'},
+                            {id:7, time:'15:00 - 16:00'}
+                        ],
                         // Snackbar goes here
                         snackbar: false,
                         snackbarMessage: '',
@@ -438,6 +453,30 @@
 				},
 
 				methods: {
+                    changeSchedule(item) {
+                        return new Promise((resolve, reject) => {
+                            let data = {
+                                id: item.id,
+                                availability: item.availability
+                            }
+                            axios.put('<?= base_url()?>api/Schedules', data)
+                                .then((response) => {
+                                    resolve(response.data)
+                                }) .catch((err) => {
+                                    if(err.response.status == 500) reject('Server Error')
+                                })
+                        })
+                        .then((response) => {
+                            this.snackbarMessage = response.message
+                            this.snackbarColor = 'success'
+                        }) .catch(err => {
+                            this.snackbarMessage = err
+                            this.snackbarColor = 'error'
+                        }) .finally(() => {
+                            this.snackbar = true
+                            this.get()
+                        })
+                    },
                     uploadJadwal() {
                         if(this.$refs.form.validate()) {
                             return new Promise( (resolve, reject) => {
@@ -499,6 +538,19 @@
                             })
                             .then((response) => {
                                 this.listDosen = response
+                            })
+                        })
+                        .then(() => {
+                            return new Promise((resolve, reject) => {
+                                axios.get('<?= base_url()?>api/Schedules', {params: {id_dosen: <?=$id?>}})
+                                    .then((response) => {
+                                        resolve(response.data)
+                                    }) .catch((err) => {
+                                        if(err.response.status == 500) reject('Server Error')
+                                    })
+                            })
+                            .then((response) => {
+                                this.schedules = response
                             })
                         })
                     },
