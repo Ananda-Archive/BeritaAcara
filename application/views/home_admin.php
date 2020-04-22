@@ -37,6 +37,9 @@
 												show-select
 												v-model="selectedForVerify"
 											>
+											<template v-slot:item.date="{item}">
+												<span>{{ dateFormat(item.date) }}</span>
+											</template>
 											</v-data-table>
 											<v-card-actions>
                                                 <v-container>
@@ -319,6 +322,58 @@
 													</template>
 													</v-autocomplete>
 												</v-col>
+												<v-col cols='12'>
+													<v-simple-table class="mx-n4">
+														<template v-slot:default>
+															<tbody>
+																<tr>
+																	<td class="font-weight-bold">BERKAS SKRIPSI</td>
+																	<td>
+																		<v-icon @click.stop="goToSkripsi" class='blue--text'>mdi-file</v-icon>
+																		<span class="mx-4">||</span>
+																		<v-icon @click="verify('skripsi_file_verified',0)" class="mr-4 red--text" :disabled="mahasiswa.berkas[0].skripsi_file_verified_ketua_penguji == 0">mdi-close</v-icon>
+																		<v-icon @click="verify('skripsi_file_verified',1)" class="mr-4 green--text" :disabled="mahasiswa.berkas[0].skripsi_file_verified_ketua_penguji == 1">mdi-check</v-icon>
+																		<span v-if="mahasiswa.berkas[0].skripsi_file_verified_ketua_penguji == 0" class="red--text">Revisi</span>
+                                                                    	<span v-if="mahasiswa.berkas[0].skripsi_file_verified_ketua_penguji == 1" class="green--text">Diterima</span>
+																	</td>
+																</tr>
+																<tr>
+																	<td class="font-weight-bold">BERKAS TOEFL</td>
+																	<td>
+																		<v-icon @click.stop="goToToefl" class='blue--text'>mdi-file</v-icon>
+																		<span class="mx-4">||</span>
+																		<v-icon @click="verify('toefl_file_verified',0)" class="mr-4 red--text" :disabled="mahasiswa.berkas[0].toefl_file_verified == 0">mdi-close</v-icon>
+																		<v-icon @click="verify('toefl_file_verified',1)" class="mr-4 green--text" :disabled="mahasiswa.berkas[0].toefl_file_verified == 1">mdi-check</v-icon>
+																		<span v-if="mahasiswa.berkas[0].toefl_file_verified == 0" class="red--text">Revisi</span>
+																		<span v-if="mahasiswa.berkas[0].toefl_file_verified == 1" class="green--text">Diterima</span>
+																	</td>
+																</tr>
+																<tr>
+																	<td class="font-weight-bold">TRANSKRIP</td>
+																	<td>
+																		<v-icon @click.stop="goToTranskrip" class='blue--text'>mdi-file</v-icon>
+																		<span class="mx-4">||</span>
+																		<v-icon @click="verify('transkrip_file_verified',0)" class="mr-4 red--text" :disabled="mahasiswa.berkas[0].transkrip_file_verified == 0">mdi-close</v-icon>
+																		<v-icon @click="verify('transkrip_file_verified',1)" class="mr-4 green--text" :disabled="mahasiswa.berkas[0].transkrip_file_verified == 1">mdi-check</v-icon>
+																		<span v-if="mahasiswa.berkas[0].transkrip_file_verified == 0" class="red--text">Revisi</span>
+																		<span v-if="mahasiswa.berkas[0].transkrip_file_verified == 1" class="green--text">Diterima</span>
+																	</td>
+																</tr>
+																<tr>
+																	<td class="font-weight-bold">KARTU BIMBINGAN</td>
+																	<td>
+																		<v-icon @click.stop="goToBimbingan" class='blue--text'>mdi-file</v-icon>
+																		<span class="mx-4">||</span>
+																		<v-icon @click="verify('bimbingan_file_verified',0)" class="mr-4 red--text" :disabled="mahasiswa.berkas[0].bimbingan_file_verified == 0">mdi-close</v-icon>
+																		<v-icon @click="verify('bimbingan_file_verified',1)" class="mr-4 green--text" :disabled="mahasiswa.berkas[0].bimbingan_file_verified == 1">mdi-check</v-icon>
+																		<span v-if="mahasiswa.berkas[0].bimbingan_file_verified == 0" class="red--text">Revisi</span>
+																		<span v-if="mahasiswa.berkas[0].bimbingan_file_verified == 1" class="green--text">Diterima</span>
+																	</td>
+																</tr>
+															</tbody>
+														</template>
+													</v-simple-table>
+												</v-col>
 											</v-card-text>
 										</v-form>
 										<v-card-actions>
@@ -527,6 +582,67 @@
 				},
 
 				methods: {
+					goToSkripsi() {
+                        window.open(this.mahasiswa.berkas[0].skripsi_file, '_blank');
+                    },
+                    goToToefl() {
+                        window.open(this.mahasiswa.berkas[0].toefl_file, '_blank');
+                    },
+                    goToTranskrip() {
+                        window.open(this.mahasiswa.berkas[0].transkrip_file, '_blank');
+                    },
+                    goToBimbingan() {
+                        window.open(this.mahasiswa.berkas[0].bimbingan_file, '_blank');
+                    },
+					verify(which_one,is_pass) {
+                        return new Promise((resolve, reject) => {
+                            if(which_one == 'skripsi_file_verified') {
+                                var data = {id: this.mahasiswa.berkas[0].id, skripsi_file_verified_ketua_penguji: is_pass}
+                            } else {
+                                if(which_one == 'toefl_file_verified') {
+                                    var data = {id: this.mahasiswa.berkas[0].id, toefl_file_verified: is_pass}
+                                } else {
+                                    if(which_one == 'transkrip_file_verified') {
+                                        var data = {id: this.mahasiswa.berkas[0].id, transkrip_file_verified: is_pass}
+                                    } else {
+                                        if(which_one == 'bimbingan_file_verified') {
+                                            var data = {id: this.mahasiswa.berkas[0].id, bimbingan_file_verified: is_pass}
+                                        }
+                                    }
+                                }
+                            }
+                            axios.put('<?= base_url()?>api/Berkas',data)
+                                .then((response) => {
+                                    resolve(response.data)
+                                }) .catch((err) => {
+                                    if(err.response.status == 500) reject('Server Error')
+                                })
+                        }) .then((response) => {
+                            this.snackbarMessage = response.message
+                            this.snackbarColor = 'success'
+                        }) .catch(err => {
+                            this.snackbarMessage = err
+                            this.snackbarColor = 'error'
+                        }) .finally(() => {
+                            this.snackbar = true
+                            this.get()
+                            if(which_one == 'skripsi_file_verified') {
+                                this.mahasiswa.berkas[0].skripsi_file_verified_ketua_penguji = is_pass
+                            } else {
+                                if(which_one == 'toefl_file_verified') {
+                                    this.mahasiswa.berkas[0].toefl_file_verified = is_pass
+                                } else {
+                                    if(which_one == 'transkrip_file_verified') {
+                                        this.mahasiswa.berkas[0].transkrip_file_verified = is_pass
+                                    } else {
+                                        if(which_one == 'bimbingan_file_verified') {
+                                            this.mahasiswa.berkas[0].bimbingan_file_verified = is_pass
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                    },
 					resetBerkas() {
 						return new Promise((resolve, reject) => {
 							let data = {
@@ -803,7 +919,10 @@
                                 this.close()
                             })
                         }
-                    }
+                    },
+					dateFormat(val) {
+                        return val ? moment(val).format('DD MMMM YYYY') : ''
+                    },
 				},
 				
 				computed: {
@@ -818,6 +937,7 @@
 						return [
 							{text:'NIM', value:'nomor'},
 							{text:'Nama', value:'nama'},
+							{text:'Tanggal Registrasi', value:'date'},
 						]
 					},
 					mahasiswaHeader() {

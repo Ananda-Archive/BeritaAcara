@@ -21,31 +21,33 @@ class Admin extends REST_Controller {
 
 
     public function index_put() {
-        $users = $this->put('users');
-        if(isset($users)) {
-            if($this->M_Admin->verify($users)) {
-                $this->response(
-                    array(
-                        'status' => TRUE,
-                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
-                    ), REST_Controller::HTTP_OK
-                );
+        if($this->session->userdata('id')) {
+            $users = $this->put('users');
+            if(isset($users)) {
+                if($this->M_Admin->verify($users)) {
+                    $this->response(
+                        array(
+                            'status' => TRUE,
+                            'message' => $this::UPDATE_SUCCESS_MESSSAGE
+                        ), REST_Controller::HTTP_OK
+                    );
+                } else {
+                    $this->response(
+                        array(
+                            'status' => FALSE,
+                            'message' => $this::UPDATE_FAILED_MESSAGE
+                        ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                    );
+                }
             } else {
                 $this->response(
                     array(
                         'status' => FALSE,
                         'message' => $this::UPDATE_FAILED_MESSAGE
-                    ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                    ),
+                    REST_Controller::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
-        } else {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::UPDATE_FAILED_MESSAGE
-                ),
-                REST_Controller::HTTP_INTERNAL_SERVER_ERROR
-            );
         }
     }
 

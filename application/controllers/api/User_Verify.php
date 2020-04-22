@@ -20,24 +20,33 @@ class User_Verify extends REST_Controller {
     }
 
     public function index_put() {
-        $id_mahasiswa = $this->put('id_mahasiswa');
-        if(!isset($id_mahasiswa)) {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::REQUIRED_PARAMETER_MESSAGE."ID"
-                ), REST_Controller::HTTP_BAD_REQUEST
-            );
-            return;
-        }
-        if($this->M_User->verify_user($id_mahasiswa)) {
-            if($this->M_Berkas->storeEmpty($id_mahasiswa)) {
+        if($this->session->userdata('id')) {
+            $id_mahasiswa = $this->put('id_mahasiswa');
+            if(!isset($id_mahasiswa)) {
                 $this->response(
                     array(
-                        'status' => TRUE,
-                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
-                    ), REST_Controller::HTTP_OK
+                        'status' => FALSE,
+                        'message' => $this::REQUIRED_PARAMETER_MESSAGE."ID"
+                    ), REST_Controller::HTTP_BAD_REQUEST
                 );
+                return;
+            }
+            if($this->M_User->verify_user($id_mahasiswa)) {
+                if($this->M_Berkas->storeEmpty($id_mahasiswa)) {
+                    $this->response(
+                        array(
+                            'status' => TRUE,
+                            'message' => $this::UPDATE_SUCCESS_MESSSAGE
+                        ), REST_Controller::HTTP_OK
+                    );
+                } else {
+                    $this->response(
+                        array(
+                            'status' => FALSE,
+                            'message' => $this::UPDATE_FAILED_MESSAGE
+                        ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                    );
+                }
             } else {
                 $this->response(
                     array(
@@ -46,13 +55,6 @@ class User_Verify extends REST_Controller {
                     ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
-        } else {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::UPDATE_FAILED_MESSAGE
-                ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
-            );
         }
         
     }

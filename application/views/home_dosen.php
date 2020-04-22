@@ -127,39 +127,39 @@
                                                             <td class="font-weight-bold">BERKAS TOEFL</td>
                                                             <td>
                                                                 <v-icon @click.stop="goToToefl" class='blue--text'>mdi-file</v-icon>
-                                                                <span class="mx-4" v-if="id == beritaAcara.id_ketua_penguji">
+                                                                <!-- <span class="mx-4" v-if="id == beritaAcara.id_ketua_penguji">
                                                                     <span class="mr-4">||</span>
                                                                     <v-icon @click="verify('toefl_file_verified',0)" class="mr-4 red--text" :disabled="beritaAcara.berkas[0].toefl_file_verified == 0">mdi-close</v-icon>
                                                                     <v-icon @click="verify('toefl_file_verified',1)" class="mr-4 green--text" :disabled="beritaAcara.berkas[0].toefl_file_verified == 1">mdi-check</v-icon>
                                                                     <span v-if="beritaAcara.berkas[0].toefl_file_verified == 0" class="red--text">Revisi</span>
                                                                     <span v-if="beritaAcara.berkas[0].toefl_file_verified == 1" class="green--text">Lulus</span>
-                                                                </span>
+                                                                </span> -->
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td class="font-weight-bold">TRANSKRIP</td>
                                                             <td>
                                                                 <v-icon @click.stop="goToTranskrip" class='blue--text'>mdi-file</v-icon>
-                                                                <span class="mx-4" v-if="id == beritaAcara.id_ketua_penguji">
+                                                                <!-- <span class="mx-4" v-if="id == beritaAcara.id_ketua_penguji">
                                                                     <span class="mr-4">||</span>
                                                                     <v-icon @click="verify('transkrip_file_verified',0)" class="mr-4 red--text" :disabled="beritaAcara.berkas[0].transkrip_file_verified == 0">mdi-close</v-icon>
                                                                     <v-icon @click="verify('transkrip_file_verified',1)" class="mr-4 green--text" :disabled="beritaAcara.berkas[0].transkrip_file_verified == 1">mdi-check</v-icon>
                                                                     <span v-if="beritaAcara.berkas[0].transkrip_file_verified == 0" class="red--text">Revisi</span>
                                                                     <span v-if="beritaAcara.berkas[0].transkrip_file_verified == 1" class="green--text">Lulus</span>
-                                                                </span>
+                                                                </span> -->
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td class="font-weight-bold">KARTU BIMBINGAN</td>
                                                             <td>
                                                                 <v-icon @click.stop="goToBimbingan" class='blue--text'>mdi-file</v-icon>
-                                                                <span class="mx-4" v-if="id == beritaAcara.id_ketua_penguji">
+                                                                <!-- <span class="mx-4" v-if="id == beritaAcara.id_ketua_penguji">
                                                                     <span class="mr-4">||</span>
                                                                     <v-icon @click="verify('bimbingan_file_verified',0)" class="mr-4 red--text" :disabled="beritaAcara.berkas[0].bimbingan_file_verified == 0">mdi-close</v-icon>
                                                                     <v-icon @click="verify('bimbingan_file_verified',1)" class="mr-4 green--text" :disabled="beritaAcara.berkas[0].bimbingan_file_verified == 1">mdi-check</v-icon>
                                                                     <span v-if="beritaAcara.berkas[0].bimbingan_file_verified == 0" class="red--text">Revisi</span>
                                                                     <span v-if="beritaAcara.berkas[0].bimbingan_file_verified == 1" class="green--text">Lulus</span>
-                                                                </span>
+                                                                </span> -->
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -179,7 +179,7 @@
                                                                 ></v-text-field>
                                                             </td>
                                                         </tr>
-                                                        <tr v-if="beritaAcara.id_ketua_penguji">
+                                                        <tr v-if="beritaAcara.id_ketua_penguji == id">
                                                         <!-- <tr v-if="beritaAcara.id_ketua_penguji == id && beritaAcara.status != 'Lulus' && beritaAcara.status != null"> -->
                                                             <td class="font-weight-bold">NILAI FINAL</td>
                                                             <td class="px-n4">

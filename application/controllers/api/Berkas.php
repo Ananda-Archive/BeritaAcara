@@ -215,75 +215,77 @@ class Berkas extends REST_Controller {
     }
 
     public function index_put() {
-        $toefl_file_verified = $this->put('toefl_file_verified');
-        $skripsi_file_verified_dosen_pembimbing = $this->put('skripsi_file_verified_dosen_pembimbing');
-        $skripsi_file_verified_ketua_penguji = $this->put('skripsi_file_verified_ketua_penguji');
-        $skripsi_file_verified_dosen_penguji = $this->put('skripsi_file_verified_dosen_penguji');
-        $transkrip_file_verified = $this->put('transkrip_file_verified');
-        $bimbingan_file_verified = $this->put('bimbingan_file_verified');
-        $id = $this->put('id');
-        $id_mahasiswa = $this->put('id_mahasiswa');
-        $reset = $this->put('reset');
-        if(isset($reset) && $reset == 1) {
-            if($this->M_Berkas->storeEmpty($id_mahasiswa)) {
+        if($this->session->userdata('id')) {
+            $toefl_file_verified = $this->put('toefl_file_verified');
+            $skripsi_file_verified_dosen_pembimbing = $this->put('skripsi_file_verified_dosen_pembimbing');
+            $skripsi_file_verified_ketua_penguji = $this->put('skripsi_file_verified_ketua_penguji');
+            $skripsi_file_verified_dosen_penguji = $this->put('skripsi_file_verified_dosen_penguji');
+            $transkrip_file_verified = $this->put('transkrip_file_verified');
+            $bimbingan_file_verified = $this->put('bimbingan_file_verified');
+            $id = $this->put('id');
+            $id_mahasiswa = $this->put('id_mahasiswa');
+            $reset = $this->put('reset');
+            if(isset($reset) && $reset == 1) {
+                if($this->M_Berkas->storeEmpty($id_mahasiswa)) {
+                    $this->response(
+                        array(
+                            'status' => TRUE,
+                            'message' => $this::UPDATE_SUCCESS_MESSSAGE
+        
+                        ),
+                        REST_Controller::HTTP_OK
+                    );
+                    return;
+                }
+            }
+            $datas = array();
+            if(!isset($id)) {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
+                    ),
+                    REST_Controller::HTTP_BAD_REQUEST
+                );
+                return;
+            }
+            $datas = array_merge($datas, array('id' => $id));
+            if(isset($toefl_file_verified)){
+                $datas = array_merge($datas, array('toefl_file_verified' => $toefl_file_verified));
+            }
+            if(isset($skripsi_file_verified_dosen_pembimbing)){
+                $datas = array_merge($datas, array('skripsi_file_verified_dosen_pembimbing' => $skripsi_file_verified_dosen_pembimbing));
+            }
+            if(isset($skripsi_file_verified_ketua_penguji)){
+                $datas = array_merge($datas, array('skripsi_file_verified_ketua_penguji' => $skripsi_file_verified_ketua_penguji));
+            }
+            if(isset($skripsi_file_verified_dosen_penguji)){
+                $datas = array_merge($datas, array('skripsi_file_verified_dosen_penguji' => $skripsi_file_verified_dosen_penguji));
+            }
+            if(isset($transkrip_file_verified)){
+                $datas = array_merge($datas, array('transkrip_file_verified' => $transkrip_file_verified));
+            }
+            if(isset($bimbingan_file_verified)){
+                $datas = array_merge($datas, array('bimbingan_file_verified' => $bimbingan_file_verified));
+            }
+            if($this->M_Berkas->verify($id,$datas)) {
                 $this->response(
                     array(
                         'status' => TRUE,
                         'message' => $this::UPDATE_SUCCESS_MESSSAGE
-    
+
                     ),
                     REST_Controller::HTTP_OK
                 );
-                return;
+            } else {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::UPDATE_FAILED_MESSAGE
+                    ),
+                    REST_Controller::HTTP_BAD_REQUEST
+                );
             }
-        }
-        $datas = array();
-        if(!isset($id)) {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
-                ),
-                REST_Controller::HTTP_BAD_REQUEST
-            );
-            return;
-        }
-        $datas = array_merge($datas, array('id' => $id));
-        if(isset($toefl_file_verified)){
-            $datas = array_merge($datas, array('toefl_file_verified' => $toefl_file_verified));
-        }
-        if(isset($skripsi_file_verified_dosen_pembimbing)){
-            $datas = array_merge($datas, array('skripsi_file_verified_dosen_pembimbing' => $skripsi_file_verified_dosen_pembimbing));
-        }
-        if(isset($skripsi_file_verified_ketua_penguji)){
-            $datas = array_merge($datas, array('skripsi_file_verified_ketua_penguji' => $skripsi_file_verified_ketua_penguji));
-        }
-        if(isset($skripsi_file_verified_dosen_penguji)){
-            $datas = array_merge($datas, array('skripsi_file_verified_dosen_penguji' => $skripsi_file_verified_dosen_penguji));
-        }
-        if(isset($transkrip_file_verified)){
-            $datas = array_merge($datas, array('transkrip_file_verified' => $transkrip_file_verified));
-        }
-        if(isset($bimbingan_file_verified)){
-            $datas = array_merge($datas, array('bimbingan_file_verified' => $bimbingan_file_verified));
-        }
-        if($this->M_Berkas->verify($id,$datas)) {
-            $this->response(
-                array(
-                    'status' => TRUE,
-                    'message' => $this::UPDATE_SUCCESS_MESSSAGE
-
-                ),
-                REST_Controller::HTTP_OK
-            );
-        } else {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::UPDATE_FAILED_MESSAGE
-                ),
-                REST_Controller::HTTP_BAD_REQUEST
-            );
         }
     }
 

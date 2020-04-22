@@ -20,47 +20,57 @@ class Dosen extends REST_Controller {
     }
 
     public function index_post() {
-        $nomor = $this->post('nomor');
-        $nama = $this->post('nama');
-        $email = $this->post('email');
-        $password = hash('sha512',$this->post('nomor') . config_item('encryption_key'));
-        if(!isset($nomor)) {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::REQUIRED_PARAMETER_MESSAGE."nomor"
-                ), REST_Controller::HTTP_BAD_REQUEST
-            );
-            return;
-        }
-        if(!isset($nama)) {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::REQUIRED_PARAMETER_MESSAGE."nama"
-                ), REST_Controller::HTTP_BAD_REQUEST
-            );
-            return;
-        }
-        if(!isset($email)) {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::REQUIRED_PARAMETER_MESSAGE."email"
-                ), REST_Controller::HTTP_BAD_REQUEST
-            );
-            return;
-        }
-        if($this->M_Dosen->get_by_nomor($nomor)->num_rows() == 0) {
-            if($id_dosen = $this->M_Dosen->insert($nomor,$nama,$email,$password)) {
-                if($this->M_Schedules->insert($id_dosen)) {
-                    $this->response(
-                        array(
-                            'status' => TRUE,
-                            'message' => $this::INSERT_SUCCESS_MESSSAGE
-                        ),
-                        REST_Controller::HTTP_CREATED
-                    );
+        if($this->session->userdata('id')) {
+            $nomor = $this->post('nomor');
+            $nama = $this->post('nama');
+            $email = $this->post('email');
+            $password = hash('sha512',$this->post('nomor') . config_item('encryption_key'));
+            if(!isset($nomor)) {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::REQUIRED_PARAMETER_MESSAGE."nomor"
+                    ), REST_Controller::HTTP_BAD_REQUEST
+                );
+                return;
+            }
+            if(!isset($nama)) {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::REQUIRED_PARAMETER_MESSAGE."nama"
+                    ), REST_Controller::HTTP_BAD_REQUEST
+                );
+                return;
+            }
+            if(!isset($email)) {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::REQUIRED_PARAMETER_MESSAGE."email"
+                    ), REST_Controller::HTTP_BAD_REQUEST
+                );
+                return;
+            }
+            if($this->M_Dosen->get_by_nomor($nomor)->num_rows() == 0) {
+                if($id_dosen = $this->M_Dosen->insert($nomor,$nama,$email,$password)) {
+                    if($this->M_Schedules->insert($id_dosen)) {
+                        $this->response(
+                            array(
+                                'status' => TRUE,
+                                'message' => $this::INSERT_SUCCESS_MESSSAGE
+                            ),
+                            REST_Controller::HTTP_CREATED
+                        );
+                    } else {
+                        $this->response(
+                            array(
+                                'status' => FALSE,
+                                'message' => $this::INSERT_FAILED_MESSAGE
+                            ),
+                            REST_Controller::HTTP_INTERNAL_SERVER_ERROR
+                        );
+                    }
                 } else {
                     $this->response(
                         array(
@@ -74,19 +84,11 @@ class Dosen extends REST_Controller {
                 $this->response(
                     array(
                         'status' => FALSE,
-                        'message' => $this::INSERT_FAILED_MESSAGE
+                        'message' => $this::NUM_FAILED_MESSAGE
                     ),
                     REST_Controller::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
-        } else {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::NUM_FAILED_MESSAGE
-                ),
-                REST_Controller::HTTP_INTERNAL_SERVER_ERROR
-            );
         }
     }
     
@@ -113,44 +115,46 @@ class Dosen extends REST_Controller {
     }
 
     public function index_put() {
-        $id = $this->put('id');
-        $password = $this->put('password');
-        $datas = array();
-        if(!isset($id)) {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
-                ),
-                REST_Controller::HTTP_BAD_REQUEST
-            );
-            return;
-        }
-        $datas = array_merge($datas, array('id' => $id));
-        if(isset($password)){
-            $password = hash('sha512', $password . config_item('encryption_key'));
-            $datas = array_merge($datas, array('password' => $password));
-        }
-        if(isset($email)){
-            $datas = array_merge($datas, array('email' => $email));
-        }
-        if($this->M_Dosen->update($id,$datas)) {
-            $this->response(
-                array(
-                    'status' => TRUE,
-                    'message' => $this::UPDATE_SUCCESS_MESSSAGE
+        if($this->session->userdata('id')) {
+            $id = $this->put('id');
+            $password = $this->put('password');
+            $datas = array();
+            if(!isset($id)) {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
+                    ),
+                    REST_Controller::HTTP_BAD_REQUEST
+                );
+                return;
+            }
+            $datas = array_merge($datas, array('id' => $id));
+            if(isset($password)){
+                $password = hash('sha512', $password . config_item('encryption_key'));
+                $datas = array_merge($datas, array('password' => $password));
+            }
+            if(isset($email)){
+                $datas = array_merge($datas, array('email' => $email));
+            }
+            if($this->M_Dosen->update($id,$datas)) {
+                $this->response(
+                    array(
+                        'status' => TRUE,
+                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
 
-                ),
-                REST_Controller::HTTP_OK
-            );
-        } else {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::UPDATE_FAILED_MESSAGE
-                ),
-                REST_Controller::HTTP_BAD_REQUEST
-            );
+                    ),
+                    REST_Controller::HTTP_OK
+                );
+            } else {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::UPDATE_FAILED_MESSAGE
+                    ),
+                    REST_Controller::HTTP_BAD_REQUEST
+                );
+            }
         }
     }
 

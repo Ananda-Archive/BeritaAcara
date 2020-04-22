@@ -40,40 +40,42 @@ class Schedules extends REST_Controller {
     }
 
     public function index_put() {
-        $id = $this->put('id');
-        $availability = $this->put('availability');
-        $datas = array();
-        if(!isset($id)) {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
-                ),
-                REST_Controller::HTTP_BAD_REQUEST
-            );
-            return;
-        }
-        $datas = array_merge($datas, array('id' => $id));
-        if(isset($availability)){
-            $datas = array_merge($datas, array('availability' => $availability));
-        }
-        if($this->M_Schedules->update($datas,$id)) {
-            $this->response(
-                array(
-                    'status' => TRUE,
-                    'message' => $this::UPDATE_SUCCESS_MESSSAGE
+        if($this->session->userdata('id')) {
+            $id = $this->put('id');
+            $availability = $this->put('availability');
+            $datas = array();
+            if(!isset($id)) {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::REQUIRED_PARAMETER_MESSAGE." id"
+                    ),
+                    REST_Controller::HTTP_BAD_REQUEST
+                );
+                return;
+            }
+            $datas = array_merge($datas, array('id' => $id));
+            if(isset($availability)){
+                $datas = array_merge($datas, array('availability' => $availability));
+            }
+            if($this->M_Schedules->update($datas,$id)) {
+                $this->response(
+                    array(
+                        'status' => TRUE,
+                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
 
-                ),
-                REST_Controller::HTTP_OK
-            );
-        } else {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::UPDATE_FAILED_MESSAGE
-                ),
-                REST_Controller::HTTP_BAD_REQUEST
-            );
+                    ),
+                    REST_Controller::HTTP_OK
+                );
+            } else {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::UPDATE_FAILED_MESSAGE
+                    ),
+                    REST_Controller::HTTP_BAD_REQUEST
+                );
+            }
         }
     }
 

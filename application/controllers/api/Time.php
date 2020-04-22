@@ -26,32 +26,34 @@ class Time extends REST_Controller {
     }
 
     public function index_put() {
-        $tanggal_mulai = $this->put('tanggal_mulai');
-        $tanggal_berakhir = $this->put('tanggal_berakhir');
-        $date = array();
-        if(isset($tanggal_mulai)){
-            $date = array_merge($date, array('tanggal_mulai' => $tanggal_mulai));
-        }
-        if(isset($tanggal_berakhir)){
-            $date = array_merge($date, array('tanggal_berakhir' => $tanggal_berakhir));
-        }
-        if($this->M_Admin->updateDate($date)) {
-            $this->response(
-                array(
-                    'status' => TRUE,
-                    'message' => $this::UPDATE_SUCCESS_MESSSAGE
+        if($this->session->userdata('id')) {
+            $tanggal_mulai = $this->put('tanggal_mulai');
+            $tanggal_berakhir = $this->put('tanggal_berakhir');
+            $date = array();
+            if(isset($tanggal_mulai)){
+                $date = array_merge($date, array('tanggal_mulai' => $tanggal_mulai));
+            }
+            if(isset($tanggal_berakhir)){
+                $date = array_merge($date, array('tanggal_berakhir' => $tanggal_berakhir));
+            }
+            if($this->M_Admin->updateDate($date)) {
+                $this->response(
+                    array(
+                        'status' => TRUE,
+                        'message' => $this::UPDATE_SUCCESS_MESSSAGE
 
-                ),
-                REST_Controller::HTTP_OK
-            );
-        } else {
-            $this->response(
-                array(
-                    'status' => FALSE,
-                    'message' => $this::UPDATE_FAILED_MESSAGE
-                ),
-                REST_Controller::HTTP_BAD_REQUEST
-            );
+                    ),
+                    REST_Controller::HTTP_OK
+                );
+            } else {
+                $this->response(
+                    array(
+                        'status' => FALSE,
+                        'message' => $this::UPDATE_FAILED_MESSAGE
+                    ),
+                    REST_Controller::HTTP_BAD_REQUEST
+                );
+            }
         }
     }
 
