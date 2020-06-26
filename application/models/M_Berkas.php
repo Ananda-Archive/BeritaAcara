@@ -108,4 +108,12 @@ class M_Berkas extends CI_Model{
         $this->db->update($this::TABLE_NAME, $datas, "id='{$id}'");
         return $this->db->affected_rows();
     }
+
+    public function get_by_id($id) {
+        $this->db->select('*');
+        $this->db->from($this::TABLE_NAME);
+        $this->db->where("id='{$id}'");
+        $this->db->order_by('time', 'DESC');
+        return $this->db->get()->result_array();
+    }
 }

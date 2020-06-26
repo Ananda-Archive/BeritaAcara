@@ -128,7 +128,7 @@ class Berkas extends REST_Controller {
                                         $this->response(
                                             array(
                                                 'status' => FALSE,
-                                                'message' => base_url('assets/berkas/').$filename
+                                                'message' => $this->M_Berkas->get_by_id($id)
                                             ),REST_Controller::HTTP_INTERNAL_SERVER_ERROR
                                         );
                                     }
@@ -140,7 +140,7 @@ class Berkas extends REST_Controller {
                                             $this->response(
                                                 array(
                                                     'status' => TRUE,
-                                                    'message' => base_url('assets/berkas/').$filename
+                                                    'message' => $this->M_Berkas->get_by_id($id)
                                                 ), REST_Controller::HTTP_OK
                                             ); 
                                         } else {
@@ -159,7 +159,7 @@ class Berkas extends REST_Controller {
                                                 $this->response(
                                                     array(
                                                         'status' => TRUE,
-                                                        'message' => base_url('assets/berkas/').$filename
+                                                        'message' => $this->M_Berkas->get_by_id($id)
                                                     ), REST_Controller::HTTP_OK
                                                 ); 
                                             } else {

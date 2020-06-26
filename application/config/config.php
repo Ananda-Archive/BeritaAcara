@@ -24,6 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $config['base_url'] = 'http://192.168.100.5:8000/';
+// $config['base_url'] = 'http://skripsi.if.fsm.undip.ac.id/';
 
 /*
 |--------------------------------------------------------------------------

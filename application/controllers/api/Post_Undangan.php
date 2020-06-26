@@ -128,7 +128,7 @@ class Post_Undangan extends REST_Controller {
                     'protocol' => 'smtp',
                     'smtp_host' => 'ssl://smtp.googlemail.com',
                     'smtp_port' => 465,
-                    'smtp_user' => 'anandavijayatesting@gmail.com',
+                    'smtp_user' => 'noreplyskripsiifundip@gmail.com',
                     'smtp_pass' => 'coreofthecore',
                     'mailtype'  => 'html', 
                     'charset'   => 'iso-8859-1'
@@ -136,7 +136,7 @@ class Post_Undangan extends REST_Controller {
                 $this->load->library('email', $config);
                 $this->email->set_newline("\r\n");
                 
-                $this->email->from('anandavijayatesting@gmail.com', 'Universitas Diponegoro');
+                $this->email->from('noreplyskripsiifundip@gmail.com', 'Universitas Diponegoro');
                 $this->email->to($sendto); 
 
                 $this->email->attach($file);
